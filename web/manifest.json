@@ -1,6 +1,6 @@
 {
-    "name": "darood_bank",
-    "short_name": "darood_bank",
+    "name": "durood_bank",
+    "short_name": "durood_bank",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

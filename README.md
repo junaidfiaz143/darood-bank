@@ -1,4 +1,4 @@
-# darood_bank
+# durood_bank
 
 A new Flutter project.
 

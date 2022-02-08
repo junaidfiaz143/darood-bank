@@ -1,129 +1,33 @@
 {
   "project_info": {
-    "project_number": "205000076085",
-    "firebase_url": "https://tryproject-dde4c.firebaseio.com",
-    "project_id": "tryproject-dde4c",
-    "storage_bucket": "tryproject-dde4c.appspot.com"
+    "project_number": "154331124169",
+    "project_id": "duroodbank-aa710",
+    "storage_bucket": "duroodbank-aa710.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:205000076085:android:55cb6e9d0555b72a",
+        "mobilesdk_app_id": "1:154331124169:android:78739fcef390b723f95818",
         "android_client_info": {
-          "package_name": "com.base7.jd.birdapp"
+          "package_name": "com.junaid.durood_bank"
         }
       },
       "oauth_client": [
         {
-          "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
+          "client_id": "154331124169-nvgdgnme3399f3r3d2nsitc6qd7b2qbq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD2flXc24GhDNkDFASGgPfXsYSbslpBRP8"
+          "current_key": "AIzaSyBAWB41qE_UH8Ntme2fyZ_9Vy7ejNkuGEc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:205000076085:android:67c93bab5c22929d",
-        "android_client_info": {
-          "package_name": "com.example.mjunaidfiaz.firebasedemo"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "205000076085-is2oe0icgg1qngprqo87tjr8kfvkmh31.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.mjunaidfiaz.firebasedemo",
-            "certificate_hash": "9df2119f35edd91971b8d678993f9f9ad60e828c"
-          }
-        },
-        {
-          "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD2flXc24GhDNkDFASGgPfXsYSbslpBRP8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:205000076085:android:1f58bf7fb14ad855",
-        "android_client_info": {
-          "package_name": "com.example.mjunaidfiaz.json"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD2flXc24GhDNkDFASGgPfXsYSbslpBRP8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:205000076085:android:b8b0d1a0a649a8bd73ba7c",
-        "android_client_info": {
-          "package_name": "com.jd.darood_bank"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD2flXc24GhDNkDFASGgPfXsYSbslpBRP8"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "205000076085-7vu60ciujrn0l7r20ibusjcadh2hof0a.apps.googleusercontent.com",
+              "client_id": "154331124169-nvgdgnme3399f3r3d2nsitc6qd7b2qbq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

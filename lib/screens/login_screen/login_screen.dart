@@ -1,9 +1,15 @@
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:durood_bank/screens/home_screen/home_screen.dart';
+import 'package:durood_bank/screens/sign_up_screen/sign_up_screen.dart';
+import 'package:durood_bank/services/login_service.dart';
+import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:darood_bank/components/text_field_component.dart';
-import 'package:darood_bank/models/login_state_model.dart';
+import 'package:durood_bank/components/text_field_component.dart';
+import 'package:durood_bank/models/login_state_model.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,9 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   String name = "";
+
   @override
   void initState() {
     super.initState();
+
+    sendOTP("+923086294101");
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
@@ -58,6 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
@@ -73,19 +83,33 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   const Spacer(),
-                  SizedBox(
-                    height: size.height * 0.16,
+                  Text(
+                    "درودبينك",
+                    style: GoogleFonts.elMessiri(
+                        color: const Color(MyColors.primaryColor),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 36,
+                        letterSpacing: 2),
                   ),
-                  // Image.asset(
-                  //   'assets/images/virtual lab1-01.png',
-                  //   scale: 18,
-                  // ),
+                  SizedBox(
+                    height: size.height * 0.10,
+                  ),
                   SizedBox(
                     width: size.width * 0.7,
                     child: Form(
                       key: _phonelogin,
                       child: Column(
                         children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "LOGIN",
+                              style: TextStyle(
+                                color: Color(MyColors.primaryColor),
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ),
                           TextFormField(
                             enabled: !model.isLoading,
                             textInputAction: TextInputAction.next,
@@ -93,9 +117,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 prefixIcon: Padding(
                                   padding: EdgeInsets.fromLTRB(
                                       1, 1, 1, 1), // add padding to adjust icon
-                                  child: Icon(LineIcons.phone),
+                                  child: Icon(
+                                    LineIcons.phone,
+                                  ),
                                 ),
-                                fillColor: Color(0xFFe9e9e9),
+                                fillColor: Color(MyColors.grey),
                                 filled: true,
                                 hintText: 'Phone Number*',
                                 border: OutlineInputBorder(
@@ -106,8 +132,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 focusedBorder: OutlineInputBorder(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10)),
-                                    borderSide:
-                                        BorderSide(color: Color(0xFF2196f3)))),
+                                    borderSide: BorderSide(
+                                        color: Color(MyColors.primaryColor)))),
                             keyboardType: TextInputType.phone,
                             onChanged: (value) {
                               _phoneNumber = value;
@@ -130,6 +156,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     1, 1, 1, 1), // add padding to adjust icon
                                 child: Icon(LineIcons.lock),
                               ),
+                              suffixIcon: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    1, 1, 1, 1), // add padding to adjust icon
+                                child: Icon(
+                                  LineIcons.eye,
+                                ),
+                              ),
                               border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
@@ -138,9 +171,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               focusedBorder: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10)),
-                                  borderSide:
-                                      BorderSide(color: Color(0xFF2196f3))),
-                              fillColor: Color(0xFFe9e9e9),
+                                  borderSide: BorderSide(
+                                      color: Color(MyColors.primaryColor))),
+                              fillColor: Color(MyColors.grey),
                               filled: true,
                               hintText: 'Password*',
                             ),
@@ -160,6 +193,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           Align(
                               child: InkResponse(
                                 onTap: () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => const HomeScreen(
+                                        isDialogOpen: false,
+                                      ),
+                                    ),
+                                  );
                                   // Navigator.of(context).push(
                                   //   MaterialPageRoute(
                                   //     builder: (context) =>
@@ -172,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: const Text(
                                       "forgot password?",
                                       style: TextStyle(
-                                          color: Color(0xFFA1A5B3),
+                                          color: Color(MyColors.greyText),
                                           fontSize: 12),
                                     )),
                               ),
@@ -234,12 +274,47 @@ class _LoginScreenState extends State<LoginScreen> {
                             //   updateLoadingState(false);
                             // }
                           },
-                          title: 'Login',
+                          title: 'LOGIN',
+                          icon: LineIcons.arrowCircleRight,
                           check: model.isLoading,
                         )),
                   ),
                   SizedBox(height: size.height * 0.05),
                   const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          "Don't have an account? ",
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black.withOpacity(0.5)),
+                        ),
+                        IgnorePointer(
+                          ignoring: false,
+                          child: InkResponse(
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                ' SignUp',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                    color: Color(MyColors.primaryColor)),
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignUpScreen()));
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
