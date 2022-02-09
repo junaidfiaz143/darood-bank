@@ -1,6 +1,7 @@
 import 'package:durood_bank/models/slider_model.dart';
 import 'package:durood_bank/screens/logging_in_screen/logging_in_screen.dart';
 import 'package:durood_bank/utils/globals.dart';
+import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'models/login_state_model.dart';
+import 'models/total_durood_model.dart';
 
 AndroidNotificationChannel? channel;
 FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
@@ -70,11 +72,14 @@ class MyApp extends StatelessWidget {
   };
   @override
   Widget build(BuildContext context) {
+    Utilities.setFirstTimePrefrences();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<LoginStateModel>(
             create: (context) => LoginStateModel(isLoading: false)),
         ChangeNotifierProvider<SliderModel>(create: (context) => SliderModel()),
+        ChangeNotifierProvider<TotalDurooodModel>(
+            create: (context) => TotalDurooodModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -26,6 +26,7 @@ class DrawerScreenState extends State<DrawerScreen> {
   Widget listTileItem(IconData icon, String text, Function() fun,
       {String? count}) {
     return InkWell(
+      borderRadius: BorderRadius.circular(10),
       child: ListTile(
         leading: Icon(
           icon,
@@ -51,7 +52,6 @@ class DrawerScreenState extends State<DrawerScreen> {
                   Container(
                       width: 30,
                       height: 30,
-                      // padding: EdgeInsets.all(2),
                       decoration: BoxDecoration(
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(20)),
@@ -126,7 +126,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               height: media.height * 0.2,
               width: media.width,
               padding: const EdgeInsets.all(15.0),
-              color: const Color(MyColors.primaryColor),
+              // color: const Color(MyColors.primaryColor),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -138,11 +138,11 @@ class DrawerScreenState extends State<DrawerScreen> {
                               height: media.height * 0.20,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white,
+                                color: Color(MyColors.primaryColor),
                               ),
                               child: const Icon(
                                 LineIcons.user,
-                                color: Color(MyColors.primaryColor),
+                                color: Colors.white,
                               ))
                           : Image.file(profileImage!),
                     ),
@@ -152,18 +152,29 @@ class DrawerScreenState extends State<DrawerScreen> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Muhammad Junaid Fiaz",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
+                    children: [
+                      Row(
+                        children: [
+                          const Text(
+                            "Muhammad Junaid Fiaz",
+                            style: TextStyle(
+                                color: Color(MyColors.primaryColor),
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 2.0),
+                            child: Image.asset(
+                                'assets/images/official_check_icon.png',
+                                scale: 3),
+                          )
+                        ],
                       ),
-                      Text(
-                        "+92 308 6294101",
-                        style: TextStyle(color: Colors.white),
-                      )
+                      const Text(
+                        "@junaidfiaz143",
+                        style: TextStyle(
+                            color: Color(MyColors.primaryColor), fontSize: 12),
+                      ),
                       // Text(
                       //   Provider.of<ProfileModel>(context, listen: false)
                       //               .firstname ==
@@ -181,7 +192,7 @@ class DrawerScreenState extends State<DrawerScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
               child: Column(
                 children: [
                   listTileItem(LineIcons.user, 'Profile', () async {

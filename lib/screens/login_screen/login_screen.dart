@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/screens/home_screen/home_screen.dart';
 import 'package:durood_bank/screens/sign_up_screen/sign_up_screen.dart';
-import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:durood_bank/components/text_field_component.dart';
@@ -43,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
 
-    sendOTP("+923086294101");
+    // sendOTP("+923086294101");
 
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged

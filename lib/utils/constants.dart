@@ -2,6 +2,9 @@ class Constants {
   static get keySuccess => "success";
   static get keyMessage => "message";
 
+  static get keyStart => "START";
+  static get keyStop => "STOP";
+
   static get keyToken => "token";
   static get keyRiderId => "rider_id";
   static get keyUniqueId => "unique_id";

@@ -1,13 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'constants.dart';
 import 'globals.dart';
 
 class Utilities {
+  static SharedPreferences? prefs;
+
+  static const platform =
+      MethodChannel("com.junaid.durood_bank/NATIVE_SERVICE");
+
+  static Future<void> duroodLockService({required String serviceAction}) async {
+    try {
+      await platform.invokeMethod("DUROOD_LOCK_SERVICE", {
+        "service_action": serviceAction,
+      });
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
   static String _dateMakerHelper(String year, String dash, String monthZero,
       String month, String dash2, String dayZero, String day) {
     return year + dash + monthZero + month + dash2 + dayZero + day;
+  }
+
+  static setFirstTimePrefrences() async {
+    prefs = await SharedPreferences.getInstance();
+    if (prefs!.getBool("DUROOD_PREFERENCE") == null) {
+      prefs!.setBool("DUROOD_PREFERENCE", true);
+      Utilities.duroodLockService(serviceAction: Constants.keyStart);
+    }
+  }
+
+  static Future<bool?> getPrefrences(String preferenceVal) async {
+    prefs = await SharedPreferences.getInstance();
+    return prefs!.getBool(preferenceVal);
+  }
+
+  static Future setPrefrences(String preferenceKey, bool preferenceVal) async {
+    prefs = await SharedPreferences.getInstance();
+    prefs!.setBool(preferenceKey, preferenceVal);
+  }
+
+  static showSnackBar({required String txt, required BuildContext context}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      // margin: const EdgeInsets.only(bottom: 220, left: 20, right: 20),
+      content: Text(
+        txt,
+        style: const TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.red,
+    ));
   }
 
   static void showInfoDialog(BuildContext context, String info) {
@@ -73,18 +123,18 @@ class Utilities {
   }
 
   static Widget showCustomDialogNew({
-    BuildContext? context,
-    Icon? icon,
-    String? title,
-    String? message,
-    List<String>? buttons,
-    Color? iconBaseColor,
+    required BuildContext? context,
+    required Icon? icon,
+    required String? title,
+    required String? message,
+    required Color? iconBaseColor,
   }) {
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Stack(
         children: [
           Container(
+            width: 1000,
             padding: const EdgeInsets.only(
               top: 66 + 16,
               bottom: 16,
@@ -110,7 +160,7 @@ class Utilities {
                 Text(
                   "$title",
                   style: const TextStyle(
-                    fontSize: 24.0,
+                    fontSize: 14.0,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -118,42 +168,8 @@ class Utilities {
                 Text(
                   "$message",
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                  ),
-                ),
-                SizedBox(
-                    height: buttons![0] == "" && buttons[1] == "" ? 0 : 24.0),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context!).pop(); // To close the dialog
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Visibility(
-                          visible: buttons[0] == "" ? false : true,
-                          child: TextButton(
-                            child: Text(buttons[0]),
-                            onPressed: () async {
-                              Navigator.pop(context!);
-                            },
-                          ),
-                        ),
-                        Visibility(
-                          visible: buttons[1] == "" ? false : true,
-                          child: TextButton(
-                            child: Text(buttons[1]),
-                            onPressed: () {
-                              Navigator.pop(context!);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  style: GoogleFonts.elMessiri(
+                      fontSize: 16.0, color: Colors.black38),
                 ),
               ],
             ),
@@ -420,6 +436,27 @@ class Utilities {
               backgroundColor: Colors.blueAccent,
               radius: 66,
               child: Icon(LineIcons.user, size: 64),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget showLoadingDialog({required BuildContext? context}) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const SizedBox(
+              height: 100,
+              child: Center(child: CircularProgressIndicator()),
             ),
           ),
         ],

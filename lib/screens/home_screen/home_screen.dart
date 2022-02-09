@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:durood_bank/components/contribution_item.dart';
+import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/models/slider_model.dart';
+import 'package:durood_bank/models/total_durood_model.dart';
 import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
-import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +17,8 @@ import 'package:line_icons/line_icons.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool? isDialogOpen;
@@ -29,6 +34,10 @@ class HomeScreenState extends State<HomeScreen> {
   bool? isInternetOn = false;
 
   bool? isDialogOpen;
+
+  bool? isDuroodLockServiceON;
+
+  int totalDurood = 0;
 
   // List<String> gridItemsTitle = [
   //   "New Bookings",
@@ -111,9 +120,11 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    getNoInternetUsername().whenComplete(() {
-      setState(() {});
-    });
+    getDuroodPref();
+
+    // getNoInternetUsername().whenComplete(() {
+    //   setState(() {});
+    // });
 
     isDialogOpen = widget.isDialogOpen ?? false;
 
@@ -125,17 +136,17 @@ class HomeScreenState extends State<HomeScreen> {
             context: context,
             builder: (BuildContext _context) {
               return Utilities.showCustomDialogNew(
-                  context: context,
-                  title: "Info",
-                  message:
-                      "Please ensure your device is connected to the internet and try again.",
-                  icon: Icon(
-                    LineIcons.exclamationTriangle,
-                    size: 64,
-                    color: Colors.orange.shade800,
-                  ),
-                  iconBaseColor: const Color(0xFFFFE9D4),
-                  buttons: ["", ""]);
+                context: context,
+                title: "Info",
+                message:
+                    "Please ensure your device is connected to the internet and try again.",
+                icon: Icon(
+                  LineIcons.exclamationTriangle,
+                  size: 64,
+                  color: Colors.orange.shade800,
+                ),
+                iconBaseColor: const Color(0xFFFFE9D4),
+              );
             }).then((value) => isDialogOpen = false);
       });
     }
@@ -159,17 +170,17 @@ class HomeScreenState extends State<HomeScreen> {
               context: context,
               builder: (BuildContext _context) {
                 return Utilities.showCustomDialogNew(
-                    context: context,
-                    title: "Info",
-                    message:
-                        "Please ensure your device is connected to the internet and try again.",
-                    icon: Icon(
-                      LineIcons.exclamationTriangle,
-                      size: 64,
-                      color: Colors.orange.shade800,
-                    ),
-                    iconBaseColor: const Color(0xFFFFE9D4),
-                    buttons: ["", ""]);
+                  context: context,
+                  title: "Info",
+                  message:
+                      "Please ensure your device is connected to the internet and try again.",
+                  icon: Icon(
+                    LineIcons.exclamationTriangle,
+                    size: 64,
+                    color: Colors.orange.shade800,
+                  ),
+                  iconBaseColor: const Color(0xFFFFE9D4),
+                );
               }).then((value) => isDialogOpen = false);
         }
         isDialogOpen = true;
@@ -184,6 +195,14 @@ class HomeScreenState extends State<HomeScreen> {
     _connectivitySubscription.cancel();
     // pageTimer!.cancel();
     super.dispose();
+  }
+
+  getDuroodPref() async {
+    await Utilities.getPrefrences("DUROOD_PREFERENCE").then((value) {
+      if (value != null) {
+        isDuroodLockServiceON = value;
+      }
+    });
   }
 
   initSlider(BuildContext context) {
@@ -204,12 +223,16 @@ class HomeScreenState extends State<HomeScreen> {
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: const Color(MyColors.primaryColor))),
-                const Text(
-                  "12900",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 56,
-                      fontWeight: FontWeight.bold),
+                Consumer<TotalDurooodModel>(
+                  builder: (context, durood, child) {
+                    return Text(
+                      '${durood.countTotalDurood}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 56,
+                          fontWeight: FontWeight.bold),
+                    );
+                  },
                 ),
                 Text("اللَّهُمَّ صل عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
                     style: GoogleFonts.elMessiri(
@@ -305,8 +328,21 @@ class HomeScreenState extends State<HomeScreen> {
   //   }, onError: (Object o) {});
   // }
 
+  updateTotalDurood(List<QueryDocumentSnapshot<Object?>> document) {
+    totalDurood = 0;
+    for (QueryDocumentSnapshot<Object?> d in document) {
+      totalDurood = totalDurood + int.parse(d["contribution"].toString());
+    }
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      Provider.of<TotalDurooodModel>(context, listen: false)
+          .updateTotalDuroodCounter(totalDurood);
+    });
+  }
+
+  BuildContext? globalContext;
   @override
   Widget build(BuildContext context) {
+    globalContext = context;
     timeDilation = 2;
 
     globalContext = context;
@@ -316,158 +352,302 @@ class HomeScreenState extends State<HomeScreen> {
         key: _scaffoldKey,
         drawer: const DrawerScreen(),
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkResponse(
-                            onTap: () {
-                              _scaffoldKey.currentState!.openDrawer();
-                            },
-                            child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: const Color(MyColors.grey),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Icon(
-                                  LineIcons.bars,
-                                  color: Color(MyColors.primaryColor),
-                                )),
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "درودبينك",
-                                style: GoogleFonts.elMessiri(
-                                    color: const Color(MyColors.primaryColor),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 28,
-                                    letterSpacing: 2),
-                              ),
-                              // const Text("Junaid Fiaz"),
-                            ],
-                          ),
-                          InkResponse(
-                            onTap: () {
-                              // pageTimer!.cancel();
-                              if (isInternetOn != true) {
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkResponse(
+                          onTap: () {
+                            _scaffoldKey.currentState!.openDrawer();
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: const Color(MyColors.grey),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: const Icon(
+                                LineIcons.bars,
+                                color: Color(MyColors.primaryColor),
+                              )),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "درودبينك",
+                              style: GoogleFonts.elMessiri(
+                                  color: const Color(MyColors.primaryColor),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 28,
+                                  letterSpacing: 2),
+                            ),
+                            // const Text("Junaid Fiaz"),
+                          ],
+                        ),
+                        InkResponse(
+                          onTap: () {
+                            // pageTimer!.cancel();
+                            if (isInternetOn != true) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext _context) {
+                                    return Utilities.showCustomDialogNew(
+                                      context: context,
+                                      title: "Info",
+                                      message:
+                                          "Please ensure your device is connected to the internet and try again.",
+                                      icon: Icon(
+                                        LineIcons.exclamationTriangle,
+                                        size: 64,
+                                        color: Colors.orange.shade800,
+                                      ),
+                                      iconBaseColor: const Color(0xFFFFE9D4),
+                                    );
+                                  }).then((value) => isDialogOpen = false);
+                              isDialogOpen = true;
+                            } else {
+                              Navigator.of(context)
+                                  .push(
+                                MaterialPageRoute(
+                                  builder: (context) => const CounterScreen(),
+                                ),
+                              )
+                                  .then((value) {
                                 showDialog(
                                     context: context,
-                                    builder: (BuildContext _context) {
+                                    builder: (BuildContext context) {
                                       return Utilities.showCustomDialogNew(
                                           context: context,
-                                          title: "Info",
-                                          message:
-                                              "Please ensure your device is connected to the internet and try again.",
-                                          icon: Icon(
-                                            LineIcons.exclamationTriangle,
+                                          icon: const Icon(
+                                            LineIcons.doubleCheck,
                                             size: 64,
-                                            color: Colors.orange.shade800,
                                           ),
-                                          iconBaseColor: const Color(0xFFFFE9D4),
-                                          buttons: ["", ""]);
-                                    }).then((value) => isDialogOpen = false);
-                                isDialogOpen = true;
-                              } else {
-                                Navigator.of(context)
-                                    .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const CounterScreen(),
-                                  ),
-                                )
-                                    .then((value) {
-                                  // if (pageTimer!.isActive == false) {
-                                  //   startSlider();
-                                  // }
-                                });
-                              }
-                            },
-                            child: Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                    color: const Color(MyColors.grey),
-                                    borderRadius: BorderRadius.circular(10)),
-                                child: const Icon(
-                                  LineIcons.user,
-                                  color: Color(MyColors.primaryColor),
-                                )),
-                          )
-                        ]),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(20),
-                    width: MediaQuery.of(context).size.width,
-                    height: 200,
-                    decoration: BoxDecoration(
-                        color:
-                            const Color(MyColors.primaryColor).withOpacity(0.5),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(20))),
-                    child: SizedBox(
-                        width: 100,
-                        height: 100,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          itemBuilder: (_, int index) => pages![index % 3],
-                        )),
-                  ),
-                  Consumer<SliderModel>(builder: (context, sliderModel, child) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: sliderModel.currentPage == 0
-                                ? const Color(MyColors.primaryColor)
-                                    .withOpacity(0.5)
-                                : const Color(MyColors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                          ),
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          width: 5,
-                          height: 5,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          width: 5,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: sliderModel.currentPage == 1
-                                ? const Color(MyColors.primaryColor)
-                                : const Color(MyColors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          width: 5,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: sliderModel.currentPage == 2
-                                ? const Color(MyColors.primaryColor)
-                                    .withOpacity(0.5)
-                                : const Color(MyColors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                          ),
+                                          iconBaseColor: Colors.green.shade100,
+                                          title:
+                                              'You have contributed to the bank',
+                                          message: 'شکریہ');
+                                    });
+                                // if (pageTimer!.isActive == false) {
+                                //   startSlider();
+                                // }
+                              });
+                            }
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: const Color(MyColors.grey),
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: const Icon(
+                                LineIcons.bellAlt,
+                                color: Color(MyColors.primaryColor),
+                              )),
                         )
+                      ]),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(20),
+                  width: MediaQuery.of(context).size.width,
+                  height: 150,
+                  decoration: BoxDecoration(
+                      color:
+                          const Color(MyColors.primaryColor).withOpacity(0.5),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
+                  child: SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: PageView.builder(
+                        controller: _pageController,
+                        itemBuilder: (_, int index) => pages![index % 3],
+                      )),
+                ),
+                Consumer<SliderModel>(builder: (context, sliderModel, child) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: sliderModel.currentPage == 0
+                              ? const Color(MyColors.primaryColor)
+                                  .withOpacity(0.5)
+                              : const Color(MyColors.grey),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        width: 5,
+                        height: 5,
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: sliderModel.currentPage == 1
+                              ? const Color(MyColors.primaryColor)
+                              : const Color(MyColors.grey),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: sliderModel.currentPage == 2
+                              ? const Color(MyColors.primaryColor)
+                                  .withOpacity(0.5)
+                              : const Color(MyColors.grey),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20)),
+                        ),
+                      )
+                    ],
+                  );
+                }),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 20.0, top: 20, right: 20),
+                  child: Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      color: Color(MyColors.grey),
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            "DUROOD Lock Service",
+                            style: TextStyle(
+                                color: Color(MyColors.primaryColor),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15),
+                          ),
+                        ),
+                        const Spacer(),
+                        FutureBuilder<bool?>(
+                            future:
+                                Utilities.getPrefrences("DUROOD_PREFERENCE"),
+                            initialData: false,
+                            builder: (context, AsyncSnapshot<bool?> snapshot) {
+                              return Switch(
+                                value: snapshot.data!,
+                                onChanged: (value) async {
+                                  value == true
+                                      ? Utilities.duroodLockService(
+                                          serviceAction: Constants.keyStart)
+                                      : Utilities.duroodLockService(
+                                          serviceAction: Constants.keyStop);
+
+                                  Utilities.setPrefrences(
+                                      "DUROOD_PREFERENCE", value);
+                                  setState(() {
+                                    isDuroodLockServiceON = value;
+                                  });
+                                },
+                              );
+                            }),
+                        // isDuroodLockServiceON == null
+                        //     ? const CircularProgressIndicator()
+                        //     : Switch(
+                        //         value: isDuroodLockServiceON!,
+                        //         onChanged: (v) async {
+                        //           if (v == true) {
+                        //             Utilities.duroodLockService(
+                        //                 serviceAction: Constants.keyStart);
+                        //             await Utilities.setPrefrences(
+                        //                 "DUROOD_PREFERENCE", true);
+                        //           } else {
+                        //             Utilities.duroodLockService(
+                        //                 serviceAction: Constants.keyStop);
+                        //             await Utilities.setPrefrences(
+                        //                 "DUROOD_PREFERENCE", false);
+                        //           }
+                        //           setState(() {
+                        //             isDuroodLockServiceON = v;
+                        //           });
+                        //         })
                       ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 20.0, right: 20, top: 10, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 3,
+                        height: 40,
+                        child: ButtonComponent(
+                          icon: LineIcons.arrowCircleRight,
+                          title: "Contribute",
+                          check: false,
+                          function: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const CounterScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Text("دیئے گئے بٹن کو دبائیں",
+                          style: GoogleFonts.elMessiri(
+                              fontWeight: FontWeight.bold,
+                              color: const Color(MyColors.primaryColor))),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 35.0, top: 15),
+                  child: Text(
+                    "Contributions",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.black38),
+                  ),
+                ),
+                StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('durood')
+                      // .orderBy('is_official', descending: true)
+                      .snapshots(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    updateTotalDurood(snapshot.data!.docs);
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 0.0),
+                        child: ListView(
+                            shrinkWrap: true,
+                            children: snapshot.data!.docs.map((document) {
+                              return getContributionItem(context, document);
+                            }).toList()),
+                      ),
                     );
-                  }),
-                ],
-              ),
+                  },
+                ),
+              ],
             ),
           ),
         ));

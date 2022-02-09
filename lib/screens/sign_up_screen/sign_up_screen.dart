@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
@@ -22,6 +24,7 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _phonelogin = GlobalKey<FormState>();
 
+  late String _fullName = "";
   late String _phoneNumber = "";
   late String _password = "";
 
@@ -58,6 +61,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   updateLoadingState(bool loginState) {
     Provider.of<LoginStateModel>(context, listen: false).updateLoadingState =
         loginState;
+  }
+
+  createUser(String username) {
+    FirebaseFirestore.instance.collection("users").doc(username).set({
+      "full_name": _fullName,
+      "username": username,
+      "is_official": false,
+      "phone_number": _phoneNumber,
+      "address": _password,
+      "city": _password,
+      "password": _password,
+    });
   }
 
   @override
@@ -130,7 +145,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderSide: BorderSide(
                                         color: Color(MyColors.primaryColor)))),
                             onChanged: (value) {
-                              // _phoneNumber = value;
+                              _fullName = value;
                             },
                             validator: (value) {
                               // print(value);
@@ -316,6 +331,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           function: () async {
                             debugPrint(_phoneNumber);
                             debugPrint(_password);
+                            String u = _fullName.replaceAll(" ", "") +
+                                Random().nextInt(1000).toString();
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(u),
+                            ));
+
+                            createUser(u);
+
                             // ApiCall apiCall = ApiCall(url: Constants.urlLogin!);
 
                             // dynamic data = {

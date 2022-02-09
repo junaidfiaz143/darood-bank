@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/no_scroll_glow_behavior.dart';
+import 'package:durood_bank/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
@@ -15,6 +17,30 @@ class CounterScreen extends StatefulWidget {
 
 class CounterScreenState extends State<CounterScreen> {
   double _daroodCounter = 0;
+
+  makeContribution() {
+    if (_daroodCounter >= 100) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Utilities.showLoadingDialog(context: context);
+          });
+      FirebaseFirestore.instance.collection("durood").doc().set({
+        "full_name": "_fullName",
+        "username": "username",
+        "is_official": false,
+        "date": "_password",
+        "time": "_password",
+        "contribution": "${_daroodCounter.round()}",
+      }).whenComplete(() {
+        Navigator.pop(context);
+        Navigator.pop(context, "asas");
+      });
+    } else {
+      Utilities.showSnackBar(
+          txt: "Recite درود atleast 100 times", context: context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +85,9 @@ class CounterScreenState extends State<CounterScreen> {
               title: "Contribute",
               check: false,
               icon: LineIcons.arrowCircleUp,
-              function: () {},
+              function: () {
+                makeContribution();
+              },
             ),
           ),
           Container(

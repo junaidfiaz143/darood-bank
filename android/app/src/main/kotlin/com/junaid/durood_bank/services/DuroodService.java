@@ -20,13 +20,10 @@ public class DuroodService extends Service {
     IBinder mBinder;      // interface for clients that bind
     boolean mAllowRebind; // indicates whether onRebind should be used
 
-    final int NOTIFICATION_ID = 555;
+    PhoneLockUnlockReceiver receiver = new PhoneLockUnlockReceiver();
 
     @Override
     public void onCreate() {
-        // The service is being created
-
-        PhoneLockUnlockReceiver receiver = new PhoneLockUnlockReceiver();
         receiver.registerBroadcastReceiver();
 
         if (Build.VERSION.SDK_INT >= 26) {
@@ -48,26 +45,6 @@ public class DuroodService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
-//        PhoneLockUnlockReceiver receiver = new PhoneLockUnlockReceiver();
-//        receiver.registerBroadcastReceiver();
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            Notification.Builder builder = new Notification.Builder(this, "com.junaid.durood_bank.Channel")
-//                    .setContentTitle("Durood Bank")
-//                    .setContentText("SmartTracker Running")
-//                    .setAutoCancel(true);
-//            Notification notification = builder.build();
-//            startForeground(NOTIFICATION_ID, notification);
-//        } else {
-//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "com.junaid.durood_bank.Channel")
-//                    .setContentTitle("Durood Bank")
-//                    .setContentText("SmartTracker is Running...")
-//                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//                    .setAutoCancel(true);
-//            Notification notification = builder.build();
-//            startForeground(NOTIFICATION_ID, notification);
-//        }
-
         return mStartMode;
     }
 
@@ -92,5 +69,6 @@ public class DuroodService extends Service {
     @Override
     public void onDestroy() {
         // The service is no longer used and is being destroyed
+        receiver.unRegisterBroadcastReceiver();
     }
 }
