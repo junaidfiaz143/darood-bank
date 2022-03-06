@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:durood_bank/models/current_user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/colors.dart';
 
@@ -11,9 +14,13 @@ Widget getContributionItem(
       child: Container(
           height: 80,
           width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            color: Color(MyColors.accentColor),
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+          decoration: BoxDecoration(
+            color: contribution["username"] ==
+                    Provider.of<CurrentUserModel>(context, listen: false)
+                        .userName
+                ? const Color(MyColors.primaryColor)
+                : const Color(MyColors.accentColor),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -21,9 +28,13 @@ Widget getContributionItem(
               Container(
                 height: 40,
                 width: 5,
-                decoration: const BoxDecoration(
-                  color: Color(MyColors.accentColorLight),
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: contribution["username"] ==
+                          Provider.of<CurrentUserModel>(context, listen: false)
+                              .userName
+                      ? const Color(MyColors.grey).withOpacity(0.5)
+                      : const Color(MyColors.accentColorLight),
+                  borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(20),
                       bottomRight: Radius.circular(20)),
                 ),
@@ -32,13 +43,23 @@ Widget getContributionItem(
                   margin: const EdgeInsets.only(left: 5),
                   width: MediaQuery.of(context).size.width * 0.1,
                   height: MediaQuery.of(context).size.height * 0.20,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(MyColors.accentColorLight),
+                    color: contribution["username"] ==
+                            Provider.of<CurrentUserModel>(context,
+                                    listen: false)
+                                .userName
+                        ? const Color(MyColors.grey).withOpacity(0.5)
+                        : const Color(MyColors.accentColorLight),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     LineIcons.user,
-                    color: Color(MyColors.accentColor),
+                    color: contribution["username"] ==
+                            Provider.of<CurrentUserModel>(context,
+                                    listen: false)
+                                .userName
+                        ? const Color(MyColors.primaryColor)
+                        : const Color(MyColors.accentColor),
                   )),
               Padding(
                 padding: const EdgeInsets.only(left: 5.0),
@@ -56,7 +77,9 @@ Widget getContributionItem(
                                 color: Colors.white),
                           ),
                           Visibility(
-                            visible: contribution["is_official"] == true,
+                            visible: contribution["is_official"] == true
+                                ? true
+                                : false,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 2.0),
                               child: Image.asset(
@@ -88,14 +111,21 @@ Widget getContributionItem(
                       ),
                       child: Text(
                         "${contribution["contribution"]}",
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(MyColors.accentColor)),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: contribution["username"] ==
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .userName
+                              ? const Color(MyColors.primaryColor)
+                              : const Color(MyColors.accentColor),
+                        ),
                       ),
                     ),
                     Text(
-                      "${contribution["date"]} • ${contribution["time"]}",
+                      DateFormat('dd-MM-yyyy • hh:mm a')
+                          .format(contribution['time_stamp'].toDate()),
                       style: const TextStyle(fontSize: 10, color: Colors.white),
                     )
                   ],

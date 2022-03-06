@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:durood_bank/models/login_state_model.dart';
+import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
+import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
-import 'package:durood_bank/utils/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -155,24 +155,32 @@ class DrawerScreenState extends State<DrawerScreen> {
                     children: [
                       Row(
                         children: [
-                          const Text(
-                            "Muhammad Junaid Fiaz",
-                            style: TextStyle(
+                          Text(
+                            "${Provider.of<CurrentUserModel>(context, listen: false).fullName}",
+                            style: const TextStyle(
                                 color: Color(MyColors.primaryColor),
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 2.0),
-                            child: Image.asset(
-                                'assets/images/official_check_icon.png',
-                                scale: 3),
+                          Visibility(
+                            visible: Provider.of<CurrentUserModel>(context,
+                                            listen: false)
+                                        .isOfficial ==
+                                    "true"
+                                ? true
+                                : false,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 2.0),
+                              child: Image.asset(
+                                  'assets/images/official_check_icon.png',
+                                  scale: 3),
+                            ),
                           )
                         ],
                       ),
-                      const Text(
-                        "@junaidfiaz143",
-                        style: TextStyle(
+                      Text(
+                        "@${Provider.of<CurrentUserModel>(context, listen: false).userName}",
+                        style: const TextStyle(
                             color: Color(MyColors.primaryColor), fontSize: 12),
                       ),
                       // Text(
@@ -205,10 +213,10 @@ class DrawerScreenState extends State<DrawerScreen> {
                         ),
                       ));
                     } else {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginScreen()));
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => const LoginScreen()));
                     }
                   }),
                   const Divider(
@@ -240,62 +248,49 @@ class DrawerScreenState extends State<DrawerScreen> {
                   //   );
                   // }),
                   listTileItem(LineIcons.info, 'About Us', () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const LoginScreen()));
                   }),
                   listTileItem(LineIcons.clipboardList, 'Terms & Conditions',
                       () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const LoginScreen()));
                   }),
                   listTileItem(LineIcons.alternateShield, 'Privacy Policy', () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const LoginScreen()));
                   }),
                   listTileItem(LineIcons.question, 'Contact Us', () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const LoginScreen()));
                   }),
                   listTileItem(LineIcons.cog, 'Settings', () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const LoginScreen()));
                   }),
                   const Divider(),
                   listTileItem(LineIcons.alternateSignOut, 'Logout', () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-
                     showDialog(
                         barrierDismissible: false,
                         context: context,
                         builder: (context) {
                           Future.delayed(const Duration(seconds: 2), () {
-                            prefs.setString("contact", "");
-                            prefs.setString("password", "");
-                            prefs.setString("username", "");
-                            prefs.setString("user_id", "");
-                            prefs.setStringList("declinedBookings", []);
-
-                            token = "";
-                            Provider.of<LoginStateModel>(context, listen: false)
-                                .updateLoadingState = false;
-
-                            prefs.clear();
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ),
-                            );
+                            deleteSharedPreference();
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) => const LoginScreen()),
+                                (route) => false);
                           });
                           return AlertDialog(
                             title: const Text('Alert'),

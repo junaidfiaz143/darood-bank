@@ -8,6 +8,7 @@ import 'package:durood_bank/models/total_durood_model.dart';
 import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/text_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -208,7 +209,7 @@ class HomeScreenState extends State<HomeScreen> {
   initSlider(BuildContext context) {
     pages!.add(SizedBox.expand(
         child: Container(
-            margin: const EdgeInsets.all(10),
+            margin: const EdgeInsets.all(0),
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),
             ),
@@ -226,10 +227,11 @@ class HomeScreenState extends State<HomeScreen> {
                 Consumer<TotalDurooodModel>(
                   builder: (context, durood, child) {
                     return Text(
-                      '${durood.countTotalDurood}',
-                      style: const TextStyle(
+                      '${10000000 + durood.countTotalDurood}',
+                      style: TextStyle(
                           color: Colors.white,
-                          fontSize: 56,
+                          fontSize: const TextUtils()
+                              .getadaptiveTextSize(context, 50),
                           fontWeight: FontWeight.bold),
                     );
                   },
@@ -359,7 +361,7 @@ class HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -414,31 +416,17 @@ class HomeScreenState extends State<HomeScreen> {
                                   }).then((value) => isDialogOpen = false);
                               isDialogOpen = true;
                             } else {
-                              Navigator.of(context)
-                                  .push(
-                                MaterialPageRoute(
-                                  builder: (context) => const CounterScreen(),
-                                ),
-                              )
-                                  .then((value) {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Utilities.showCustomDialogNew(
-                                          context: context,
-                                          icon: const Icon(
-                                            LineIcons.doubleCheck,
-                                            size: 64,
-                                          ),
-                                          iconBaseColor: Colors.green.shade100,
-                                          title:
-                                              'You have contributed to the bank',
-                                          message: 'شکریہ');
-                                    });
-                                // if (pageTimer!.isActive == false) {
-                                //   startSlider();
-                                // }
-                              });
+                              // Navigator.of(context)
+                              //     .push(
+                              //   MaterialPageRoute(
+                              //     builder: (context) => const CounterScreen(),
+                              //   ),
+                              // )
+                              //     .then((value) {
+                              //   // if (pageTimer!.isActive == false) {
+                              //   //   startSlider();
+                              //   // }
+                              // });
                             }
                           },
                           child: Container(
@@ -454,7 +442,7 @@ class HomeScreenState extends State<HomeScreen> {
                       ]),
                 ),
                 Container(
-                  margin: const EdgeInsets.all(20),
+                  margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                   width: MediaQuery.of(context).size.width,
                   height: 150,
                   decoration: BoxDecoration(
@@ -470,51 +458,51 @@ class HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (_, int index) => pages![index % 3],
                       )),
                 ),
-                Consumer<SliderModel>(builder: (context, sliderModel, child) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: sliderModel.currentPage == 0
-                              ? const Color(MyColors.primaryColor)
-                                  .withOpacity(0.5)
-                              : const Color(MyColors.grey),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                        ),
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
-                        width: 5,
-                        height: 5,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: sliderModel.currentPage == 1
-                              ? const Color(MyColors.primaryColor)
-                              : const Color(MyColors.grey),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: sliderModel.currentPage == 2
-                              ? const Color(MyColors.primaryColor)
-                                  .withOpacity(0.5)
-                              : const Color(MyColors.grey),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                        ),
-                      )
-                    ],
-                  );
-                }),
+                // Consumer<SliderModel>(builder: (context, sliderModel, child) {
+                //   return Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Container(
+                //         decoration: BoxDecoration(
+                //           color: sliderModel.currentPage == 0
+                //               ? const Color(MyColors.primaryColor)
+                //                   .withOpacity(0.5)
+                //               : const Color(MyColors.grey),
+                //           borderRadius:
+                //               const BorderRadius.all(Radius.circular(20)),
+                //         ),
+                //         margin: const EdgeInsets.symmetric(horizontal: 2),
+                //         width: 5,
+                //         height: 5,
+                //       ),
+                //       Container(
+                //         margin: const EdgeInsets.symmetric(horizontal: 2),
+                //         width: 5,
+                //         height: 5,
+                //         decoration: BoxDecoration(
+                //           color: sliderModel.currentPage == 1
+                //               ? const Color(MyColors.primaryColor)
+                //               : const Color(MyColors.grey),
+                //           borderRadius:
+                //               const BorderRadius.all(Radius.circular(20)),
+                //         ),
+                //       ),
+                //       Container(
+                //         margin: const EdgeInsets.symmetric(horizontal: 2),
+                //         width: 5,
+                //         height: 5,
+                //         decoration: BoxDecoration(
+                //           color: sliderModel.currentPage == 2
+                //               ? const Color(MyColors.primaryColor)
+                //                   .withOpacity(0.5)
+                //               : const Color(MyColors.grey),
+                //           borderRadius:
+                //               const BorderRadius.all(Radius.circular(20)),
+                //         ),
+                //       )
+                //     ],
+                //   );
+                // }),
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 20.0, top: 20, right: 20),
@@ -598,11 +586,30 @@ class HomeScreenState extends State<HomeScreen> {
                           title: "Contribute",
                           check: false,
                           function: () {
-                            Navigator.of(context).push(
+                            Navigator.of(context)
+                                .push(
                               MaterialPageRoute(
                                 builder: (context) => const CounterScreen(),
                               ),
-                            );
+                            )
+                                .then((value) {
+                              if (value != null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Utilities.showCustomDialogNew(
+                                          context: context,
+                                          icon: const Icon(
+                                            LineIcons.doubleCheck,
+                                            size: 64,
+                                          ),
+                                          iconBaseColor: Colors.green.shade100,
+                                          title:
+                                              'You have contributed to the bank',
+                                          message: 'شکریہ');
+                                    });
+                              }
+                            });
                           },
                         ),
                       ),
@@ -624,7 +631,7 @@ class HomeScreenState extends State<HomeScreen> {
                 StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('durood')
-                      // .orderBy('is_official', descending: true)
+                      .orderBy('time_stamp', descending: true)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {

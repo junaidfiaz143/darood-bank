@@ -1,35 +1,45 @@
-import 'dart:developer';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-sendOTP(String _phoneNumber) async {
-  FirebaseAuth auth = FirebaseAuth.instance;
+import '../utils/constants.dart';
+import '../utils/utilities.dart';
 
-  await auth.verifyPhoneNumber(
-    phoneNumber: _phoneNumber,
-    verificationCompleted: (PhoneAuthCredential credential) async {
-      // ANDROID ONLY!
+savePreferences(dynamic data) async {
+  SharedPreferences _preferences = await SharedPreferences.getInstance();
+  _preferences.remove("userData");
+  List<String> userData = [];
+  userData.insert(0, data["full_name"]);
+  userData.insert(1, data["username"]);
+  userData.insert(2, "${data["is_official"]}");
+  userData.insert(3, data["phone_number"]);
+  userData.insert(4, data["city"]);
+  userData.insert(5, data["password"]);
 
-      await FirebaseAuth.instance
-          .signInWithCredential(credential)
-          .then((value) async {
-        if (value.user != null) {}
-      });
+  _preferences.setStringList("userData", userData);
+}
 
-      log("otp verified ${credential.smsCode}");
-    },
-    codeAutoRetrievalTimeout: (String verificationId) {
-      log("otp timeout $verificationId");
-    },
-    codeSent: (String verificationId, int? forceResendingToken) {
-      log("otp code sent");
+saveBitmojiSyncPreferences(bool data) async {
+  SharedPreferences _preferences = await SharedPreferences.getInstance();
+  _preferences.setBool("bitmojiSync", data);
+}
 
-      // setState(() {
-      //   verificationCode = verificationId;
-      // });
-    },
-    verificationFailed: (FirebaseAuthException error) {
-      log("otp failed $error");
-    },
-    timeout: const Duration(seconds: 60),
-  );
+deleteSharedPreference() async {
+  SharedPreferences _preferences = await SharedPreferences.getInstance();
+  Utilities.duroodLockService(serviceAction: Constants.keyStop);
+  Utilities.setPrefrences("DUROOD_PREFERENCE", false);
+  _preferences.remove("userData");
+}
+
+Future<List<String>?> loadDetails() async {
+  SharedPreferences _preferences = await SharedPreferences.getInstance();
+
+  if (_preferences.getStringList('userData') != null) {
+    return _preferences.getStringList('userData');
+  } else {
+    return null;
+  }
+}
+
+Future<bool> isLoggedIn() async {
+  SharedPreferences _preferences = await SharedPreferences.getInstance();
+  return _preferences.getStringList('userData') != null;
 }

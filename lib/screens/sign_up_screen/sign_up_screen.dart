@@ -1,10 +1,14 @@
+// ignore_for_file: unused_import
+
 import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
+import 'package:durood_bank/screens/sign_up_screen/otp_verify_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/models/login_state_model.dart';
@@ -27,15 +31,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late String _fullName = "";
   late String _phoneNumber = "";
   late String _password = "";
+  late String _rePassword = "";
+
+  final TextEditingController _cityController = TextEditingController();
 
   final String countryCode = '+92';
-
-  Future savePrefs(String contact, String password) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setString("contact", contact);
-    prefs.setString("password", password);
-  }
 
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   String name = "";
@@ -63,17 +63,90 @@ class _SignUpScreenState extends State<SignUpScreen> {
         loginState;
   }
 
-  createUser(String username) {
-    FirebaseFirestore.instance.collection("users").doc(username).set({
-      "full_name": _fullName,
-      "username": username,
-      "is_official": false,
-      "phone_number": _phoneNumber,
-      "address": _password,
-      "city": _password,
-      "password": _password,
-    });
+  generateUsername() async {
+    updateLoadingState(true);
+    String username = _fullName.toLowerCase().replaceAll(" ", "") +
+        Random().nextInt(1000).toString();
+    // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    //   content: Text(u),
+    // ));
+    final QuerySnapshot usernameQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where('username', isEqualTo: username)
+        .get();
+
+    final QuerySnapshot phoneNumberQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where("phone_number", isEqualTo: _phoneNumber)
+        .get();
+
+    if (usernameQuery.docs.isNotEmpty) {
+      await generateUsername();
+    } else {
+      updateLoadingState(false);
+    }
+
+    if (phoneNumberQuery.docs.isEmpty) {
+      debugPrint("now $username");
+
+      updateLoadingState(false);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => OTPVerifyScreen(
+            user: {
+              "full_name": _fullName,
+              "username": username,
+              "is_official": false,
+              "phone_number": _phoneNumber,
+              "city": _cityController.text,
+              "password": _password,
+              "created_at": FieldValue.serverTimestamp()
+            },
+            online: true,
+          ),
+        ),
+      );
+      // createUser(username);
+    } else {
+      debugPrint("already registered $username");
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Utilities.showCustomDialogNew(
+                context: context,
+                icon: const Icon(
+                  LineIcons.exclamation,
+                  size: 64,
+                  color: Colors.red,
+                ),
+                iconBaseColor: Colors.red.shade100,
+                title: 'Already found user with this phone number.',
+                message: '');
+          });
+    }
   }
+
+  // createUser(String username) {
+  //   updateLoadingState(true);
+
+  //   dynamic user = {
+  //     "full_name": _fullName,
+  //     "username": username,
+  //     "is_official": false,
+  //     "phone_number": _phoneNumber,
+  //     "city": _cityController.text,
+  //     "password": _password,
+  //     "created_at": FieldValue.serverTimestamp()
+  //   };
+
+  //   FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc()
+  //       .set(user)
+  //       .whenComplete(() {
+  //     updateLoadingState(false);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -193,42 +266,86 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             },
                           ),
                           SizedBox(height: size.height * 0.01),
-                          TextFormField(
-                            enabled: !model.isLoading,
-                            textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                                prefixIcon: Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      1, 1, 1, 1), // add padding to adjust icon
-                                  child: Icon(
-                                    LineIcons.city,
-                                  ),
-                                ),
-                                fillColor: Color(MyColors.grey),
-                                filled: true,
-                                hintText: 'City*',
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    borderSide: BorderSide(
-                                        color: Color(MyColors.primaryColor)))),
-                            keyboardType: TextInputType.phone,
-                            onChanged: (value) {
-                              _phoneNumber = value;
+                          InkWell(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Utilities.cityDialog(context);
+                                  }).then((value) {
+                                if (value != null) {
+                                  _cityController.text = value;
+                                }
+                              });
                             },
-                            validator: (value) {
-                              // print(value);
-                              if (value!.length == 11) {
-                                return null;
-                              }
-                              return 'Please Enter Valid Phone Number';
-                            },
+                            child: IgnorePointer(
+                              ignoring: true,
+                              child: TextFormField(
+                                controller: _cityController,
+                                readOnly: true,
+                                enabled: false,
+                                textInputAction: TextInputAction.go,
+                                decoration: const InputDecoration(
+                                    prefixIcon: Padding(
+                                      padding: EdgeInsets.fromLTRB(1, 1, 1,
+                                          1), // add padding to adjust icon
+                                      child: Icon(
+                                        LineIcons.city,
+                                      ),
+                                    ),
+                                    fillColor: Color(0xFFe9e9e9),
+                                    filled: true,
+                                    hintText: 'City*',
+                                    border: OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        borderSide: BorderSide(
+                                            color:
+                                                Color(MyColors.primaryColor)))),
+                                keyboardType: TextInputType.text,
+                              ),
+                            ),
                           ),
+                          // TextFormField(
+                          //   enabled: !model.isLoading,
+                          //   textInputAction: TextInputAction.next,
+                          //   decoration: const InputDecoration(
+                          //       prefixIcon: Padding(
+                          //         padding: EdgeInsets.fromLTRB(
+                          //             1, 1, 1, 1), // add padding to adjust icon
+                          //         child: Icon(
+                          //           LineIcons.city,
+                          //         ),
+                          //       ),
+                          //       fillColor: Color(MyColors.grey),
+                          //       filled: true,
+                          //       hintText: 'City*',
+                          //       border: OutlineInputBorder(
+                          //         borderRadius:
+                          //             BorderRadius.all(Radius.circular(10)),
+                          //         borderSide: BorderSide.none,
+                          //       ),
+                          //       focusedBorder: OutlineInputBorder(
+                          //           borderRadius:
+                          //               BorderRadius.all(Radius.circular(10)),
+                          //           borderSide: BorderSide(
+                          //               color: Color(MyColors.primaryColor)))),
+                          //   onChanged: (value) {
+                          //     _city = value;
+                          //   },
+                          //   validator: (value) {
+                          //     // print(value);
+                          //     if (value!.length == 11) {
+                          //       return null;
+                          //     }
+                          //     return 'Please Enter Valid Phone Number';
+                          //   },
+                          // ),
                           SizedBox(height: size.height * 0.01),
                           TextFormField(
                             obscureText: true,
@@ -263,7 +380,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     borderSide: BorderSide(
                                         color: Color(MyColors.primaryColor)))),
                             onChanged: (value) {
-                              // _phoneNumber = value;
+                              _password = value;
                             },
                             validator: (value) {
                               // print(value);
@@ -306,7 +423,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             ),
                             obscureText: true,
                             onChanged: (value) {
-                              _password = value;
+                              _rePassword = value;
                               // print(_password);
                             },
                             validator: (value) {
@@ -331,13 +448,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           function: () async {
                             debugPrint(_phoneNumber);
                             debugPrint(_password);
-                            String u = _fullName.replaceAll(" ", "") +
-                                Random().nextInt(1000).toString();
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(u),
-                            ));
 
-                            createUser(u);
+                            if (_fullName != "" &&
+                                _phoneNumber != "" &&
+                                _cityController.text != "" &&
+                                _password != "" &&
+                                _rePassword != "") {
+                              if (_password == _rePassword) {
+                                await generateUsername();
+                              } else {
+                                //TODO: password not matched
+                              }
+                            } else {
+                              //TODO: empty fields
+                            }
 
                             // ApiCall apiCall = ApiCall(url: Constants.urlLogin!);
 
@@ -350,8 +474,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // };
 
                             // print(data);
-
-                            updateLoadingState(true);
 
                             // var response =
                             //     await apiCall.postDataWithoutHeader(data);

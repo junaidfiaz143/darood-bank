@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/screens/home_screen/home_screen.dart';
 import 'package:durood_bank/screens/sign_up_screen/sign_up_screen.dart';
@@ -12,6 +13,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/current_user_model.dart';
+import '../../services/login_service.dart';
+import '../../utils/globals.dart';
+import '../../utils/utilities.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -192,13 +198,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           Align(
                               child: InkResponse(
                                 onTap: () {
-                                  Navigator.of(context).pushReplacement(
-                                    MaterialPageRoute(
-                                      builder: (context) => const HomeScreen(
-                                        isDialogOpen: false,
-                                      ),
-                                    ),
-                                  );
+                                  // Navigator.of(context).pushReplacement(
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const HomeScreen(
+                                  //       isDialogOpen: false,
+                                  //     ),
+                                  //   ),
+                                  // );
                                   // Navigator.of(context).push(
                                   //   MaterialPageRoute(
                                   //     builder: (context) =>
@@ -228,8 +234,69 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 200,
                         child: ButtonComponent(
                           function: () async {
-                            debugPrint(_phoneNumber);
-                            debugPrint(_password);
+                            updateLoadingState(true);
+
+                            final QuerySnapshot loginQuery =
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .where("phone_number",
+                                        isEqualTo: _phoneNumber)
+                                    .where("password", isEqualTo: _password)
+                                    .get()
+                                    .then((value) {
+                              for (var doc in value.docs) {
+                                doc.reference.update({"fcm_id": fcmId});
+                              }
+                              return value;
+                            });
+                            if (loginQuery.docs.isNotEmpty) {
+                              updateLoadingState(false);
+                              savePreferences(loginQuery.docs.first.data());
+                              loadDetails().then((value) {
+                                if (value != null) {
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .fullName = value[0];
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .userName = value[1];
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .isOfficial = value[2];
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .phoneNumber = value[3];
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .city = value[3];
+                                  Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .password = value[4];
+                                }
+                              });
+
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => const HomeScreen(),
+                                ),
+                              );
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Utilities.showCustomDialogNew(
+                                        context: context,
+                                        icon: const Icon(
+                                          LineIcons.exclamation,
+                                          size: 64,
+                                          color: Colors.red,
+                                        ),
+                                        iconBaseColor: Colors.red.shade100,
+                                        title: 'Wrong login credentials.',
+                                        message: '');
+                                  });
+                              updateLoadingState(false);
+                            }
                             // ApiCall apiCall = ApiCall(url: Constants.urlLogin!);
 
                             // dynamic data = {
@@ -241,8 +308,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             // };
 
                             // print(data);
-
-                            updateLoadingState(true);
 
                             // var response =
                             //     await apiCall.postDataWithoutHeader(data);

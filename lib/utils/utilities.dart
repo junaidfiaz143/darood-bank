@@ -24,6 +24,16 @@ class Utilities {
     }
   }
 
+  static Future<void> notificationService(
+      {required String title, required String body}) async {
+    try {
+      await platform
+          .invokeMethod("NOTIFICATION_SERVICE", {"title": title, "body": body});
+    } on Exception catch (e) {
+      debugPrint("$e");
+    }
+  }
+
   static String _dateMakerHelper(String year, String dash, String monthZero,
       String month, String dash2, String dayZero, String day) {
     return year + dash + monthZero + month + dash2 + dayZero + day;
@@ -32,8 +42,8 @@ class Utilities {
   static setFirstTimePrefrences() async {
     prefs = await SharedPreferences.getInstance();
     if (prefs!.getBool("DUROOD_PREFERENCE") == null) {
-      prefs!.setBool("DUROOD_PREFERENCE", true);
-      Utilities.duroodLockService(serviceAction: Constants.keyStart);
+      prefs!.setBool("DUROOD_PREFERENCE", false);
+      Utilities.duroodLockService(serviceAction: Constants.keyStop);
     }
   }
 
@@ -588,7 +598,7 @@ class Utilities {
       return Dialog(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
+          Radius.circular(14.0),
         )),
         child: Container(
           height: MediaQuery.of(_context).size.height / 2,

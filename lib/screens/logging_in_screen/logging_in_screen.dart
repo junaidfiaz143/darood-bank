@@ -1,9 +1,13 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:durood_bank/models/login_state_model.dart';
+import 'package:durood_bank/models/current_user_model.dart';
+import 'package:durood_bank/screens/home_screen/home_screen.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
+import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -23,56 +27,66 @@ class _LoggingInScreenState extends State<LoggingInScreen>
 
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  void tryLogin(BuildContext context) async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    updateLoadingState(bool loginState) {
-      Provider.of<LoginStateModel>(context, listen: false).updateLoadingState =
-          loginState;
-    }
-
-    updateLoadingState(true);
-
-    // var response = await apiCall.postDataWithoutHeader(data);
-    // if (response != null && response[Constants.keySuccess] == 1) {
-    //   token = response[Constants.keyToken];
-    //   riderId = response[Constants.keyRiderId];
-
-    //   dynamic res = await Utilities.loadRiderProfile(
-    //       context, prefs.getString("contact")!, prefs.getString("password")!);
-    //   print(res);
-    //   if (res == 1) {
-    //     updateLoadingState(false);
-    //   }
-    // } else {
-    //   if (response != null)
-    //     showDialog(
-    //         context: context,
-    //         builder: (BuildContext context) {
-    //           return Utilities.showAlertDialog(context,
-    //               message: response['message']);
-    //         });
-    //   updateLoadingState(false);
-    //   prefs.setString("contact", "");
-    //   prefs.setString("password", "");
-    //   prefs.setString("username", "");
-    //   prefs.setString("user_id", "");
-    //   Navigator.of(context).pushReplacement(
-    //     MaterialPageRoute(
-    //       builder: (context) => LoginScreen(),
-    //     ),
-    //   );
-    // }
-  }
-
   checkInternetConnection() async {
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ),
-        );
+        loadDetails().then((value) async {
+          if (value != null) {
+            final QuerySnapshot loginQuery = await FirebaseFirestore.instance
+                .collection('users')
+                .where("phone_number", isEqualTo: value[3])
+                .where("password", isEqualTo: value[5])
+                .get()
+                .then((value) {
+              for (var doc in value.docs) {
+                doc.reference.update({"fcm_id": fcmId});
+              }
+              return value;
+            });
+
+            if (loginQuery.docs.isNotEmpty) {
+              savePreferences(loginQuery.docs.first.data());
+              loadDetails().then((value) {
+                if (value != null) {
+                  Provider.of<CurrentUserModel>(context, listen: false)
+                      .fullName = value[0];
+                  Provider.of<CurrentUserModel>(context, listen: false)
+                      .userName = value[1];
+                  Provider.of<CurrentUserModel>(context, listen: false)
+                      .isOfficial = value[2];
+                  Provider.of<CurrentUserModel>(context, listen: false)
+                      .phoneNumber = value[3];
+                  Provider.of<CurrentUserModel>(context, listen: false).city =
+                      value[3];
+                  Provider.of<CurrentUserModel>(context, listen: false)
+                      .password = value[4];
+
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => const HomeScreen(),
+                    ),
+                  );
+                }
+              });
+            } else {
+              deleteSharedPreference();
+
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+              );
+            }
+          } else {
+            deleteSharedPreference();
+
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const LoginScreen(),
+              ),
+            );
+          }
+        });
       }
     });
 

@@ -16,8 +16,9 @@ class NotificationUtils {
     flutterLocalNotificationPlugin.initialize(initializationSettings,
         onSelectNotification: (dynamic payload) async {});
 
-    var androidDetails =
-        const AndroidNotificationDetails("007", 'DaroodBank', playSound: true);
+    var androidDetails = const AndroidNotificationDetails(
+        "durood_channel", 'DuroodBank',
+        playSound: true);
 
     var iOSDetails = const IOSNotificationDetails();
 
@@ -39,7 +40,9 @@ class NotificationUtils {
 
     try {
       dynamic userData = {
-        "to": token,
+        // "to": token,
+
+        "to": "/topics/all",
         "data": {
           "via": "FlutterFire Cloud Messaging!!!",
           "count": "0",
@@ -59,7 +62,7 @@ class NotificationUtils {
           headers: {
             "content-type": "application/json",
             "authorization":
-                "key=AAAAfI2o1Jo:APA91bEksyzNyRtt5WOSGgUETzN3dCR4KR1b2AWa1nXoOoxCFJLp3OqmhC6n133TFozyD2SMxjG71EgXAvIWunnM_ON8L7-h8mQhGYI1VMXQX6TgDMPb6KZviQR0zZa5zN5bszIH9wRq"
+                "key=AAAAI-7aEck:APA91bGRZoetLpTo1Q2Wmlt_FFkjxJFl_SVDBjuVM2ECEHlmI0Sp61z1dbkPpfX1XOX0b-456zBSUhsCtoq_tMU7xEPR17iGYxe5oi1kj7riQM04gth_3iUTr-NZKzadjs75KMKuAG9I",
           },
         ),
       );

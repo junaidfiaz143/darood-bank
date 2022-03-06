@@ -1,3 +1,5 @@
+import 'package:durood_bank/models/current_user_model.dart';
+import 'package:durood_bank/models/otp_callback_model.dart';
 import 'package:durood_bank/models/slider_model.dart';
 import 'package:durood_bank/screens/logging_in_screen/logging_in_screen.dart';
 import 'package:durood_bank/utils/globals.dart';
@@ -21,8 +23,8 @@ void main() async {
   bool kIsWeb = false;
   if (!kIsWeb) {
     channel = const AndroidNotificationChannel(
-      'high_importance_channel', // id
-      'High Importance Notifications', // title // description
+      'durood_channel', // id
+      'Duroood Notifications', // title // description
       importance: Importance.high,
     );
 
@@ -40,8 +42,7 @@ void main() async {
       sound: true,
     );
 
-    // await FirebaseMessaging.instance.subscribeToTopic('all');
-    // FirebaseMessaging.instance.
+    await FirebaseMessaging.instance.subscribeToTopic('all');
   }
 
   FirebaseMessaging.instance
@@ -52,12 +53,17 @@ void main() async {
       .then((token) {
     fcmId = token!;
   });
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
+  @override
+  MyAppState createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
   final Map<int, Color> color = {
     50: const Color.fromRGBO(70, 161, 134, .1),
     100: const Color.fromRGBO(70, 161, 134, .2),
@@ -70,6 +76,29 @@ class MyApp extends StatelessWidget {
     800: const Color.fromRGBO(70, 161, 134, .9),
     900: const Color.fromRGBO(70, 161, 134, 1),
   };
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null && !false) {
+        Utilities.notificationService(
+            title: notification.title!, body: notification.body!);
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) => HomeScreen(),
+      //   ),
+      // );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Utilities.setFirstTimePrefrences();
@@ -80,6 +109,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<SliderModel>(create: (context) => SliderModel()),
         ChangeNotifierProvider<TotalDurooodModel>(
             create: (context) => TotalDurooodModel()),
+        ChangeNotifierProvider<OTPCallback>(create: (context) => OTPCallback()),
+        ChangeNotifierProvider<CurrentUserModel>(
+            create: (context) => CurrentUserModel(
+                city: '',
+                fullName: '',
+                isOfficial: '',
+                password: '',
+                phoneNumber: '',
+                userName: '')),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -7,6 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/current_user_model.dart';
 
 class CounterScreen extends StatefulWidget {
   const CounterScreen({Key? key}) : super(key: key);
@@ -26,15 +29,20 @@ class CounterScreenState extends State<CounterScreen> {
             return Utilities.showLoadingDialog(context: context);
           });
       FirebaseFirestore.instance.collection("durood").doc().set({
-        "full_name": "_fullName",
-        "username": "username",
-        "is_official": false,
-        "date": "_password",
-        "time": "_password",
+        "full_name":
+            Provider.of<CurrentUserModel>(context, listen: false).fullName,
+        "username":
+            Provider.of<CurrentUserModel>(context, listen: false).userName,
+        "is_official":
+            Provider.of<CurrentUserModel>(context, listen: false).isOfficial ==
+                    "true"
+                ? true
+                : false,
         "contribution": "${_daroodCounter.round()}",
+        "time_stamp": FieldValue.serverTimestamp(),
       }).whenComplete(() {
         Navigator.pop(context);
-        Navigator.pop(context, "asas");
+        Navigator.pop(context, "contributed");
       });
     } else {
       Utilities.showSnackBar(

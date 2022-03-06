@@ -43,4 +43,7 @@ class Constants {
       "https://www.virtuallab.com.pk/rider/api/authentication/booking/collect.php";
 
   static get googleMapsApiKey => "AIzaSyBcWKiu8O0xJkEUd5HdxczodcF09CYpL0o";
+
+  static get firebasePushNotificationServerKey =>
+      "AAAAI-7aEck:APA91bGRZoetLpTo1Q2Wmlt_FFkjxJFl_SVDBjuVM2ECEHlmI0Sp61z1dbkPpfX1XOX0b-456zBSUhsCtoq_tMU7xEPR17iGYxe5oi1kj7riQM04gth_3iUTr-NZKzadjs75KMKuAG9I";
 }
