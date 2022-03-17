@@ -8,7 +8,6 @@ import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/models/login_state_model.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,10 @@ import '../../utils/globals.dart';
 import '../../utils/utilities.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final String? phoneNumber;
+  final String? password;
+  const LoginScreen({Key? key, this.phoneNumber, this.password})
+      : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -47,9 +49,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-
-    // sendOTP("+923086294101");
-
+    if (widget.phoneNumber != null && widget.password != null) {
+      updateLoadingState(true);
+      _phoneNumber = widget.phoneNumber!;
+      _password = widget.password!;
+      doLogin();
+    }
     _connectivitySubscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
@@ -57,6 +62,63 @@ class _LoginScreenState extends State<LoginScreen> {
         name = result.toString().split(".")[1];
       });
     });
+  }
+
+  doLogin() async {
+    updateLoadingState(true);
+
+    final QuerySnapshot loginQuery = await FirebaseFirestore.instance
+        .collection('users')
+        .where("phone_number", isEqualTo: _phoneNumber)
+        .where("password", isEqualTo: _password)
+        .get()
+        .then((value) {
+      for (var doc in value.docs) {
+        doc.reference.update({"fcm_id": fcmId});
+      }
+      return value;
+    });
+    if (loginQuery.docs.isNotEmpty) {
+      updateLoadingState(false);
+      savePreferences(loginQuery.docs.first.data());
+      loadDetails().then((value) {
+        if (value != null) {
+          Provider.of<CurrentUserModel>(context, listen: false).fullName =
+              value[0];
+          Provider.of<CurrentUserModel>(context, listen: false).userName =
+              value[1];
+          Provider.of<CurrentUserModel>(context, listen: false).isOfficial =
+              value[2];
+          Provider.of<CurrentUserModel>(context, listen: false).phoneNumber =
+              value[3];
+          Provider.of<CurrentUserModel>(context, listen: false).city = value[3];
+          Provider.of<CurrentUserModel>(context, listen: false).password =
+              value[4];
+        }
+      });
+
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Utilities.showCustomDialogNew(
+                context: context,
+                icon: const Icon(
+                  LineIcons.exclamation,
+                  size: 64,
+                  color: Colors.red,
+                ),
+                iconBaseColor: Colors.red.shade100,
+                title: 'Wrong login credentials.',
+                message: '');
+          });
+      updateLoadingState(false);
+    }
   }
 
   @override
@@ -72,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    timeDilation = 2;
+    // timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
@@ -234,109 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: 200,
                         child: ButtonComponent(
                           function: () async {
-                            updateLoadingState(true);
-
-                            final QuerySnapshot loginQuery =
-                                await FirebaseFirestore.instance
-                                    .collection('users')
-                                    .where("phone_number",
-                                        isEqualTo: _phoneNumber)
-                                    .where("password", isEqualTo: _password)
-                                    .get()
-                                    .then((value) {
-                              for (var doc in value.docs) {
-                                doc.reference.update({"fcm_id": fcmId});
-                              }
-                              return value;
-                            });
-                            if (loginQuery.docs.isNotEmpty) {
-                              updateLoadingState(false);
-                              savePreferences(loginQuery.docs.first.data());
-                              loadDetails().then((value) {
-                                if (value != null) {
-                                  Provider.of<CurrentUserModel>(context,
-                                          listen: false)
-                                      .fullName = value[0];
-                                  Provider.of<CurrentUserModel>(context,
-                                          listen: false)
-                                      .userName = value[1];
-                                  Provider.of<CurrentUserModel>(context,
-                                          listen: false)
-                                      .isOfficial = value[2];
-                                  Provider.of<CurrentUserModel>(context,
-                                          listen: false)
-                                      .phoneNumber = value[3];
-                                  Provider.of<CurrentUserModel>(context,
-                                          listen: false)
-                                      .city = value[3];
-                                  Provider.of<CurrentUserModel>(context,
-                                          listen: false)
-                                      .password = value[4];
-                                }
-                              });
-
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Utilities.showCustomDialogNew(
-                                        context: context,
-                                        icon: const Icon(
-                                          LineIcons.exclamation,
-                                          size: 64,
-                                          color: Colors.red,
-                                        ),
-                                        iconBaseColor: Colors.red.shade100,
-                                        title: 'Wrong login credentials.',
-                                        message: '');
-                                  });
-                              updateLoadingState(false);
-                            }
-                            // ApiCall apiCall = ApiCall(url: Constants.urlLogin!);
-
-                            // dynamic data = {
-                            //   "password": _password,
-                            //   "contact": _phoneNumber,
-                            //   "longitude": "$globalLongitude",
-                            //   "latitude": "$globalLatitude",
-                            //   "fcm_id": "$fcmId"
-                            // };
-
-                            // print(data);
-
-                            // var response =
-                            //     await apiCall.postDataWithoutHeader(data);
-                            // if (response != null &&
-                            //     response[Constants.keySuccess] == 1) {
-                            //   token = response[Constants.keyToken];
-                            //   riderId = response[Constants.keyRiderId];
-
-                            //   // savePrefs(_phoneNumber, _password);
-
-                            //   dynamic res = await Utilities.loadRiderProfile(
-                            //       context, _phoneNumber, _password);
-
-                            //   if (res == 1) {
-                            //     updateLoadingState(false);
-                            //   } else {
-                            //     updateLoadingState(false);
-                            //   }
-                            // } else {
-                            //   if (response != null) {
-                            //     showDialog(
-                            //         context: context,
-                            //         builder: (BuildContext context) {
-                            //           return Utilities.showAlertDialog(context,
-                            //               message: response['message']);
-                            //         });
-                            //   }
-                            //   updateLoadingState(false);
-                            // }
+                            doLogin();
                           },
                           title: 'LOGIN',
                           icon: LineIcons.arrowCircleRight,
@@ -362,8 +322,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                ' SignUp',
+                                ' Sign up',
                                 style: TextStyle(
+                                    decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.w900,
                                     color: Color(MyColors.primaryColor)),
                               ),

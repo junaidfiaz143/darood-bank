@@ -30,18 +30,9 @@ class NotificationUtils {
   }
 
   static Future<void> sendPushNotification(
-      {required String? token,
-      required String? title,
-      required String? message}) async {
-    if (token == null) {
-      debugPrint('Unable to send FCM message, no token exists.');
-      return;
-    }
-
+      {required String? title, required String? message}) async {
     try {
       dynamic userData = {
-        // "to": token,
-
         "to": "/topics/all",
         "data": {
           "via": "FlutterFire Cloud Messaging!!!",

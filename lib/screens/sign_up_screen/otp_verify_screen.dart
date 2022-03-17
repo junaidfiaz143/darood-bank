@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
 import 'package:durood_bank/screens/sign_up_screen/count_down.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/notification_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -78,23 +79,50 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
 
     await auth.verifyPhoneNumber(
       phoneNumber: _phoneNumber,
+      timeout: const Duration(seconds: 60),
       verificationCompleted: (PhoneAuthCredential credential) async {
         // ANDROID ONLY!
 
         await FirebaseAuth.instance
             .signInWithCredential(credential)
             .then((value) async {
-          if (value.user != null) {}
+          if (value.user != null) {
+            print("logged in");
+            // FirebaseAuth.instance.signOut();
+            NotificationUtils.sendPushNotification(
+                title: "Durood Bank",
+                message:
+                    "${widget.user["full_name"].toString().toUpperCase()} is on Durood Bank from ${widget.user["city"]}");
+            FirebaseFirestore.instance
+                .collection("users")
+                .doc()
+                .set(widget.user)
+                .whenComplete(() {
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                      builder: (context) => LoginScreen(
+                          phoneNumber: widget.user["phone_number"]!,
+                          password: widget.user["password"]!)),
+                  (Route<dynamic> route) => false);
+            });
+          }
         });
+
+        print("otp verified ${credential.smsCode}");
       },
-      codeAutoRetrievalTimeout: (String verificationId) {},
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print("otp timeout $verificationId");
+      },
       codeSent: (String verificationId, int? forceResendingToken) {
+        print("otp code sent");
+
         setState(() {
           verificationCode = verificationId;
         });
       },
-      verificationFailed: (FirebaseAuthException error) {},
-      timeout: const Duration(seconds: 60),
+      verificationFailed: (FirebaseAuthException error) {
+        print("otp failed $error");
+      },
     );
   }
 
@@ -105,23 +133,35 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
               smsCode: otpCode, verificationId: verificationCode))
           .then((value) {
         if (value.user != null) {
+          print("logged in");
+          // FirebaseAuth.instance.signOut();
+          NotificationUtils.sendPushNotification(
+              title: "Durood Bank",
+              message:
+                  "${widget.user["full_name"].toString().toUpperCase()} is on Durood Bank from ${widget.user["city"]}");
           FirebaseFirestore.instance
               .collection("users")
               .doc()
               .set(widget.user)
               .whenComplete(() {
             Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                MaterialPageRoute(
+                    builder: (context) => LoginScreen(
+                        phoneNumber: widget.user["phone_number"]!,
+                        password: widget.user["password"]!)),
                 (Route<dynamic> route) => false);
           });
 
           setState(() {
             isOTPVerified = true;
           });
-        } else {}
+        } else {
+          print("invalid pin");
+        }
       });
     } catch (e) {
-      debugPrint("$e");
+      print(e);
+      print("invalid pin");
     }
   }
 
@@ -222,11 +262,6 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
                                 .setOTPDone(false);
 
                             Navigator.of(context).maybePop();
-                            // Navigator.pushAndRemoveUntil(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (_) => const LoginScreen()),
-                            //     (route) => false);
                           }
                         });
                         return Container();
@@ -296,6 +331,10 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
         v.then((value) => null);
       });
     }
+
+    FirebaseAuth.instance.authStateChanges().listen((event) {
+      print(event);
+    });
   }
 
   @override

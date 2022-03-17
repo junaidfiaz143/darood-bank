@@ -5,6 +5,7 @@ import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
 import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -284,8 +285,11 @@ class DrawerScreenState extends State<DrawerScreen> {
                         barrierDismissible: false,
                         context: context,
                         builder: (context) {
-                          Future.delayed(const Duration(seconds: 2), () {
+                          Future.delayed(const Duration(seconds: 2), () async {
                             deleteSharedPreference();
+                            await FirebaseMessaging.instance
+                                .unsubscribeFromTopic('all');
+
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(

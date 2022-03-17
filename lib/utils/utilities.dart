@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -55,6 +56,14 @@ class Utilities {
   static Future setPrefrences(String preferenceKey, bool preferenceVal) async {
     prefs = await SharedPreferences.getInstance();
     prefs!.setBool(preferenceKey, preferenceVal);
+  }
+
+  static getCurrentContributionId() async {
+    final QuerySnapshot contributionQuery =
+        await FirebaseFirestore.instance.collection("contribution_id").get();
+    dynamic data = contributionQuery.docs.first.data();
+    contributionId = data["current_durood_cycle"];
+    print(contributionId);
   }
 
   static showSnackBar({required String txt, required BuildContext context}) {
@@ -621,7 +630,7 @@ class Utilities {
                   ),
                   fillColor: Color(0xFFe9e9e9),
                   filled: true,
-                  hintText: 'City',
+                  hintText: 'Search city',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     borderSide: BorderSide.none,

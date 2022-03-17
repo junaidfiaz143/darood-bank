@@ -1,5 +1,3 @@
-// ignore_for_file: unused_import
-
 import 'dart:async';
 import 'dart:math';
 
@@ -12,11 +10,9 @@ import 'package:durood_bank/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/models/login_state_model.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -28,8 +24,11 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _phonelogin = GlobalKey<FormState>();
 
+  int _genderRadioValue = 1;
+
   late String _fullName = "";
   late String _phoneNumber = "";
+  late String _gender = "Male";
   late String _password = "";
   late String _rePassword = "";
 
@@ -61,6 +60,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
   updateLoadingState(bool loginState) {
     Provider.of<LoginStateModel>(context, listen: false).updateLoadingState =
         loginState;
+  }
+
+  void _handleRadioValueChange(value) {
+    setState(
+      () {
+        _genderRadioValue = value;
+        switch (_genderRadioValue) {
+          case 0:
+            _gender = 'Male';
+            break;
+          case 1:
+            _gender = 'Female';
+            break;
+        }
+      },
+    );
   }
 
   generateUsername() async {
@@ -96,6 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             user: {
               "full_name": _fullName,
               "username": username,
+              "gender": _gender,
               "is_official": false,
               "phone_number": _phoneNumber,
               "city": _cityController.text,
@@ -150,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    timeDilation = 2;
+    // timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
@@ -265,6 +281,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               return 'Please Enter Valid Phone Number';
                             },
                           ),
+                          SizedBox(height: size.height * 0.01),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Male",
+                                style: GoogleFonts.quicksand(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Radio(
+                                  value: 1,
+                                  groupValue: _genderRadioValue,
+                                  onChanged: _handleRadioValueChange),
+                              Text(
+                                "Female",
+                                style: GoogleFonts.quicksand(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Radio(
+                                  value: 0,
+                                  groupValue: _genderRadioValue,
+                                  onChanged: _handleRadioValueChange),
+                            ],
+                          ),
+
                           SizedBox(height: size.height * 0.01),
                           InkWell(
                             onTap: () {
@@ -462,47 +505,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             } else {
                               //TODO: empty fields
                             }
-
-                            // ApiCall apiCall = ApiCall(url: Constants.urlLogin!);
-
-                            // dynamic data = {
-                            //   "password": _password,
-                            //   "contact": _phoneNumber,
-                            //   "longitude": "$globalLongitude",
-                            //   "latitude": "$globalLatitude",
-                            //   "fcm_id": "$fcmId"
-                            // };
-
-                            // print(data);
-
-                            // var response =
-                            //     await apiCall.postDataWithoutHeader(data);
-                            // if (response != null &&
-                            //     response[Constants.keySuccess] == 1) {
-                            //   token = response[Constants.keyToken];
-                            //   riderId = response[Constants.keyRiderId];
-
-                            //   // savePrefs(_phoneNumber, _password);
-
-                            //   dynamic res = await Utilities.loadRiderProfile(
-                            //       context, _phoneNumber, _password);
-
-                            //   if (res == 1) {
-                            //     updateLoadingState(false);
-                            //   } else {
-                            //     updateLoadingState(false);
-                            //   }
-                            // } else {
-                            //   if (response != null) {
-                            //     showDialog(
-                            //         context: context,
-                            //         builder: (BuildContext context) {
-                            //           return Utilities.showAlertDialog(context,
-                            //               message: response['message']);
-                            //         });
-                            //   }
-                            //   updateLoadingState(false);
-                            // }
                           },
                           title: 'SIGNUP',
                           icon: LineIcons.arrowCircleRight,
@@ -528,8 +530,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             child: const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: Text(
-                                ' LogIn',
+                                ' Log in',
                                 style: TextStyle(
+                                    decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.w900,
                                     color: Color(MyColors.primaryColor)),
                               ),

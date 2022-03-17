@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../utils/utilities.dart';
+
 class LoggingInScreen extends StatefulWidget {
   const LoggingInScreen({Key? key}) : super(key: key);
 
@@ -28,8 +30,9 @@ class _LoggingInScreenState extends State<LoggingInScreen>
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   checkInternetConnection() async {
-    _controller.addStatusListener((status) {
+    _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
+        await Utilities.setFirstTimePrefrences();
         loadDetails().then((value) async {
           if (value != null) {
             final QuerySnapshot loginQuery = await FirebaseFirestore.instance
@@ -133,6 +136,7 @@ class _LoggingInScreenState extends State<LoggingInScreen>
 
   @override
   void initState() {
+    Utilities.getCurrentContributionId();
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
 

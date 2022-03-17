@@ -8,6 +8,7 @@ import 'package:durood_bank/models/total_durood_model.dart';
 import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/text_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -113,7 +114,7 @@ class HomeScreenState extends State<HomeScreen> {
     prefs = await SharedPreferences.getInstance();
   }
 
-  initFirebaseNotifications() async {
+  initAllPushNotifications() async {
     await FirebaseMessaging.instance.subscribeToTopic('all');
   }
 
@@ -121,6 +122,7 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
+    initAllPushNotifications();
     getDuroodPref();
 
     // getNoInternetUsername().whenComplete(() {
@@ -157,7 +159,6 @@ class HomeScreenState extends State<HomeScreen> {
         .listen((ConnectivityResult result) {
       if (result.toString().split(".")[1] == "wifi" ||
           result.toString().split(".")[1] == "mobile") {
-        initFirebaseNotifications();
         isInternetOn = true;
 
         if (isDialogOpen == true) {
@@ -333,7 +334,9 @@ class HomeScreenState extends State<HomeScreen> {
   updateTotalDurood(List<QueryDocumentSnapshot<Object?>> document) {
     totalDurood = 0;
     for (QueryDocumentSnapshot<Object?> d in document) {
-      totalDurood = totalDurood + int.parse(d["contribution"].toString());
+      if (d["contribution_id"] == contributionId) {
+        totalDurood = totalDurood + int.parse(d["contribution"].toString());
+      }
     }
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       Provider.of<TotalDurooodModel>(context, listen: false)
@@ -341,13 +344,10 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  BuildContext? globalContext;
   @override
   Widget build(BuildContext context) {
-    globalContext = context;
-    timeDilation = 2;
+    // timeDilation = 0;
 
-    globalContext = context;
     initSlider(context);
 
     return Scaffold(
@@ -631,24 +631,43 @@ class HomeScreenState extends State<HomeScreen> {
                 StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('durood')
+                      // .where("contribution_id", isGreaterThanOrEqualTo: 1)
                       .orderBy('time_stamp', descending: true)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
                     if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return const Expanded(
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       );
                     }
 
                     updateTotalDurood(snapshot.data!.docs);
+
+                    // print(snapshot.data!.docs[0]["time_stamp"]);
+                    // print(snapshot.data!.docs[1]["time_stamp"]);
+
+                    // snapshot.data!.docs.sort((a, b) => a["time_stamp"]
+                    //     .toDate()
+                    //     .compareTo(b["time_stamp"].toDate()));
+
+                    // print(snapshot.data!.docs[0]["time_stamp"]);
+                    // print(snapshot.data!.docs[1]["time_stamp"]);
+
                     return Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 0.0),
                         child: ListView(
                             shrinkWrap: true,
                             children: snapshot.data!.docs.map((document) {
-                              return getContributionItem(context, document);
+                              if (document["contribution_id"] ==
+                                  contributionId) {
+                                return getContributionItem(context, document);
+                              } else {
+                                return Container();
+                              }
                             }).toList()),
                       ),
                     );

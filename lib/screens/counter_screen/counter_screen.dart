@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/no_scroll_glow_behavior.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ class CounterScreenState extends State<CounterScreen> {
                 : false,
         "contribution": "${_daroodCounter.round()}",
         "time_stamp": FieldValue.serverTimestamp(),
+        "contribution_id": contributionId
       }).whenComplete(() {
         Navigator.pop(context);
         Navigator.pop(context, "contributed");
