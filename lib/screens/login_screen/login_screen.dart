@@ -137,99 +137,58 @@ class _LoginScreenState extends State<LoginScreen> {
     // timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
-        return SizedBox(
-          width: double.infinity,
-          height: size.height,
-          child: SingleChildScrollView(
-            child: SizedBox(
-              width: double.infinity,
-              height: size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  const Spacer(),
-                  Text(
-                    "درودبينك",
-                    style: GoogleFonts.elMessiri(
-                        color: const Color(MyColors.primaryColor),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 36,
-                        letterSpacing: 2),
-                  ),
-                  SizedBox(
-                    height: size.height * 0.10,
-                  ),
-                  SizedBox(
-                    width: size.width * 0.7,
-                    child: Form(
-                      key: _phonelogin,
-                      child: Column(
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              "LOGIN",
-                              style: TextStyle(
-                                color: Color(MyColors.primaryColor),
-                                fontWeight: FontWeight.w900,
-                              ),
+        return SingleChildScrollView(
+          child: SizedBox(
+            width: double.infinity,
+            height: size.height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Spacer(),
+                Text(
+                  "درودبينك",
+                  style: GoogleFonts.elMessiri(
+                      color: const Color(MyColors.primaryColor),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 36,
+                      letterSpacing: 2),
+                ),
+                SizedBox(
+                  height: size.height * 0.10,
+                ),
+                SizedBox(
+                  width: size.width * 0.7,
+                  child: Form(
+                    key: _phonelogin,
+                    child: Column(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "LOGIN",
+                            style: TextStyle(
+                              color: Color(MyColors.primaryColor),
+                              fontWeight: FontWeight.w900,
                             ),
                           ),
-                          TextFormField(
-                            enabled: !model.isLoading,
-                            textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                                prefixIcon: Padding(
-                                  padding: EdgeInsets.fromLTRB(
-                                      1, 1, 1, 1), // add padding to adjust icon
-                                  child: Icon(
-                                    LineIcons.phone,
-                                  ),
-                                ),
-                                fillColor: Color(MyColors.grey),
-                                filled: true,
-                                hintText: 'Phone Number*',
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    borderSide: BorderSide(
-                                        color: Color(MyColors.primaryColor)))),
-                            keyboardType: TextInputType.phone,
-                            onChanged: (value) {
-                              _phoneNumber = value;
-                            },
-                            validator: (value) {
-                              // print(value);
-                              if (value!.length == 11) {
-                                return null;
-                              }
-                              return 'Please Enter Valid Phone Number';
-                            },
-                          ),
-                          SizedBox(height: size.height * 0.01),
-                          TextFormField(
-                            enabled: !model.isLoading,
-                            textInputAction: TextInputAction.go,
-                            decoration: const InputDecoration(
+                        ),
+                        TextFormField(
+                          enabled: !model.isLoading,
+                          textInputAction: TextInputAction.next,
+                          decoration: const InputDecoration(
                               prefixIcon: Padding(
                                 padding: EdgeInsets.fromLTRB(
                                     1, 1, 1, 1), // add padding to adjust icon
-                                child: Icon(LineIcons.lock),
-                              ),
-                              suffixIcon: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    1, 1, 1, 1), // add padding to adjust icon
                                 child: Icon(
-                                  LineIcons.eye,
+                                  LineIcons.phone,
                                 ),
                               ),
+                              fillColor: Color(MyColors.grey),
+                              filled: true,
+                              hintText: 'Phone Number*',
                               border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
@@ -239,109 +198,146 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10)),
                                   borderSide: BorderSide(
-                                      color: Color(MyColors.primaryColor))),
-                              fillColor: Color(MyColors.grey),
-                              filled: true,
-                              hintText: 'Password*',
-                            ),
-                            obscureText: true,
-                            onChanged: (value) {
-                              _password = value;
-                              // print(_password);
-                            },
-                            validator: (value) {
-                              // print(value);
-                              if (value!.length == 8) {
-                                return null;
-                              }
-                              return 'Password Length Should be Greater Than or Equal to 8';
-                            },
-                          ),
-                          Align(
-                              child: InkResponse(
-                                onTap: () {
-                                  // Navigator.of(context).pushReplacement(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => const HomeScreen(
-                                  //       isDialogOpen: false,
-                                  //     ),
-                                  //   ),
-                                  // );
-                                  // Navigator.of(context).push(
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) =>
-                                  //         ResetPasswordScreen(online: false),
-                                  //   ),
-                                  // );
-                                },
-                                child: Container(
-                                    padding: const EdgeInsets.all(10),
-                                    child: const Text(
-                                      "forgot password?",
-                                      style: TextStyle(
-                                          color: Color(MyColors.greyText),
-                                          fontSize: 12),
-                                    )),
-                              ),
-                              alignment: Alignment.centerRight)
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: size.height * 0.05),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SizedBox(
-                        height: 45,
-                        width: 200,
-                        child: ButtonComponent(
-                          function: () async {
-                            doLogin();
+                                      color: Color(MyColors.primaryColor)))),
+                          keyboardType: TextInputType.phone,
+                          onChanged: (value) {
+                            _phoneNumber = value;
                           },
-                          title: 'LOGIN',
-                          icon: LineIcons.arrowCircleRight,
-                          check: model.isLoading,
-                        )),
-                  ),
-                  SizedBox(height: size.height * 0.05),
-                  const Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "Don't have an account? ",
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black.withOpacity(0.5)),
+                          validator: (value) {
+                            // print(value);
+                            if (value!.length == 11) {
+                              return null;
+                            }
+                            return 'Please Enter Valid Phone Number';
+                          },
                         ),
-                        IgnorePointer(
-                          ignoring: false,
-                          child: InkResponse(
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                ' Sign up',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    fontWeight: FontWeight.w900,
-                                    color: Color(MyColors.primaryColor)),
+                        SizedBox(height: size.height * 0.01),
+                        TextFormField(
+                          enabled: !model.isLoading,
+                          textInputAction: TextInputAction.go,
+                          decoration: const InputDecoration(
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  1, 1, 1, 1), // add padding to adjust icon
+                              child: Icon(LineIcons.lock),
+                            ),
+                            suffixIcon: Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                  1, 1, 1, 1), // add padding to adjust icon
+                              child: Icon(
+                                LineIcons.eye,
                               ),
                             ),
-                            onTap: () {
-                              Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const SignUpScreen()));
-                            },
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                borderSide: BorderSide(
+                                    color: Color(MyColors.primaryColor))),
+                            fillColor: Color(MyColors.grey),
+                            filled: true,
+                            hintText: 'Password*',
                           ),
+                          obscureText: true,
+                          onChanged: (value) {
+                            _password = value;
+                            // print(_password);
+                          },
+                          validator: (value) {
+                            // print(value);
+                            if (value!.length == 8) {
+                              return null;
+                            }
+                            return 'Password Length Should be Greater Than or Equal to 8';
+                          },
                         ),
+                        Align(
+                            child: InkResponse(
+                              onTap: () {
+                                // Navigator.of(context).pushReplacement(
+                                //   MaterialPageRoute(
+                                //     builder: (context) => const HomeScreen(
+                                //       isDialogOpen: false,
+                                //     ),
+                                //   ),
+                                // );
+                                // Navigator.of(context).push(
+                                //   MaterialPageRoute(
+                                //     builder: (context) =>
+                                //         ResetPasswordScreen(online: false),
+                                //   ),
+                                // );
+                              },
+                              child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: const Text(
+                                    "forgot password?",
+                                    style: TextStyle(
+                                        color: Color(MyColors.greyText),
+                                        fontSize: 12),
+                                  )),
+                            ),
+                            alignment: Alignment.centerRight)
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                SizedBox(height: size.height * 0.05),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                      height: 45,
+                      width: 200,
+                      child: ButtonComponent(
+                        function: () async {
+                          doLogin();
+                        },
+                        title: 'LOGIN',
+                        icon: LineIcons.arrowCircleRight,
+                        check: model.isLoading,
+                      )),
+                ),
+                SizedBox(height: size.height * 0.05),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Don't have an account? ",
+                        style: TextStyle(
+                            fontSize: 12, color: Colors.black.withOpacity(0.5)),
+                      ),
+                      IgnorePointer(
+                        ignoring: false,
+                        child: InkResponse(
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              ' Sign up',
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w900,
+                                  color: Color(MyColors.primaryColor)),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const SignUpScreen()));
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );

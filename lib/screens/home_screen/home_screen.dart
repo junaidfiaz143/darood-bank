@@ -228,7 +228,7 @@ class HomeScreenState extends State<HomeScreen> {
                 Consumer<TotalDurooodModel>(
                   builder: (context, durood, child) {
                     return Text(
-                      '${10000000 + durood.countTotalDurood}',
+                      '${durood.countTotalDurood}',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: const TextUtils()

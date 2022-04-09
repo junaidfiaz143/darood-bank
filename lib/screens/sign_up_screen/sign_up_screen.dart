@@ -169,14 +169,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
-        return SizedBox(
-          width: double.infinity,
-          height: size.height,
-          child: SingleChildScrollView(
-            child: SizedBox(
-              width: double.infinity,
-              height: size.height,
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 70.0, bottom: 0),
+            child: IntrinsicHeight(
+              // width: double.infinity,
+              // height: size.height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
