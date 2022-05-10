@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/models/otp_callback_model.dart';
 import 'package:durood_bank/models/slider_model.dart';
@@ -19,7 +21,16 @@ AndroidNotificationChannel? channel;
 FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if (Platform.isIOS) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyDZyb3O5yDwLmzKni2YHAvwoSAaOpkp308",
+            appId: "1:154331124169:ios:ca11eb285355ee42f95818",
+            messagingSenderId: "154331124169",
+            projectId: "duroodbank-aa710"));
+  } else {
+    await Firebase.initializeApp();
+  }
 
   bool kIsWeb = false;
   if (!kIsWeb) {
