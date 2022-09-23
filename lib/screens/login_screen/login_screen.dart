@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
         return SingleChildScrollView(
           child: SizedBox(

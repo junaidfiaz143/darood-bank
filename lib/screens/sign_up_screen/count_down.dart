@@ -87,7 +87,7 @@ class Countdown extends AnimatedWidget {
         '${clockTimer.inMinutes.remainder(60).toString().padLeft(2, '0')}:${(clockTimer.inSeconds.remainder(60) % 60).toString().padLeft(2, '0')}';
 
     if (clockTimer.inMinutes == 0 && clockTimer.inSeconds == 0) {
-      SchedulerBinding.instance!.addPostFrameCallback((_) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
         Provider.of<OTPCallback>(context, listen: false).setOTPDone(true);
         // Navigator.pushReplacement(
         //     context, MaterialPageRoute(builder: (_) => LoginScreen()));

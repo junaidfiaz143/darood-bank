@@ -52,6 +52,7 @@ dependencies:
   connectivity_plus: ^2.1.0
   horizontal_picker: ^1.2.0
   ntp: ^2.0.0
+  flutter_tts: ^3.5.3
   
 dev_dependencies:
   flutter_test:

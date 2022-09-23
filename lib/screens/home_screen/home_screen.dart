@@ -13,12 +13,15 @@ import 'package:durood_bank/utils/text_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbols.dart';
 import 'package:line_icons/line_icons.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../models/current_user_model.dart';
 import '../../utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -133,7 +136,7 @@ class HomeScreenState extends State<HomeScreen> {
     isInternetOn = !isDialogOpen!;
 
     if (widget.isDialogOpen != null && widget.isDialogOpen == true) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
         showDialog(
             context: context,
             builder: (BuildContext _context) {
@@ -261,7 +264,7 @@ class HomeScreenState extends State<HomeScreen> {
             ),
             width: MediaQuery.of(context).size.width,
             child: Center(child: Image.asset("assets/images/p3.png")))));
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         Provider.of<SliderModel>(context, listen: false).updatePosition(0);
         _currentPage = 0;
@@ -337,16 +340,36 @@ class HomeScreenState extends State<HomeScreen> {
         totalDurood = totalDurood + int.parse(d["contribution"].toString());
       }
     }
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TotalDurooodModel>(context, listen: false)
           .updateTotalDuroodCounter(totalDurood);
     });
+  }
+
+  FlutterTts flutterTts = FlutterTts();
+
+  Future _speak() async {
+    List<dynamic> languages = await flutterTts.getLanguages;
+
+    debugPrint("$languages");
+
+    var installed = await flutterTts.isLanguageInstalled("ur-PK");
+
+    debugPrint("$installed");
+
+    // await flutterTts.setVoice({"locale": "ur-PK"});
+    await flutterTts.setLanguage("ur-PK");
+    var result = await flutterTts.speak(
+        "${Provider.of<CurrentUserModel>(context, listen: false).fullName}. درود بینک میں آپ کاخوش آمدید ");
+
+    if (result == 1) {}
   }
 
   @override
   Widget build(BuildContext context) {
     // timeDilation = 0;
 
+    _speak();
     initSlider(context);
 
     return Scaffold(

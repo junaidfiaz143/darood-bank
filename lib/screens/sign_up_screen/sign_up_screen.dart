@@ -169,7 +169,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // timeDilation = 2;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      // resizeToAvoidBottomInset: false,
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
         return SingleChildScrollView(
           child: Padding(

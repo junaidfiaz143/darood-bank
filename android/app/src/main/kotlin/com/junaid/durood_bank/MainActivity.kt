@@ -27,7 +27,7 @@ class MainActivity : FlutterActivity() {
     private val description = "Durood Notifications"
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun configureFlutterEngine(@NotNull flutterEngine: FlutterEngine) {
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,

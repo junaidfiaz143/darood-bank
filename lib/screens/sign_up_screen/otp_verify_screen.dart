@@ -255,7 +255,7 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
                             ))),
                     Consumer<OTPCallback>(
                       builder: (context, otpDone, child) {
-                        WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
                           // print(otpDone);
                           if (otpDone.otpTimeComplete == true) {
                             Provider.of<OTPCallback>(context, listen: false)
