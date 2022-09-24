@@ -9,7 +9,6 @@ import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/globals.dart';
-import 'package:durood_bank/utils/text_utils.dart';
 import 'package:durood_bank/utils/tts_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -31,7 +30,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
 
   bool? isInternetOn = false;
 
@@ -178,7 +177,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   dispose() {
-    _connectivitySubscription.cancel();
+    _connectivitySubscription!.cancel();
     // pageTimer!.cancel();
     super.dispose();
   }
@@ -211,13 +210,15 @@ class HomeScreenState extends State<HomeScreen> {
                         color: const Color(MyColors.primaryColor))),
                 Consumer<TotalDurooodModel>(
                   builder: (context, durood, child) {
-                    return Text(
-                      '${durood.countTotalDurood}',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: const TextUtils()
-                              .getadaptiveTextSize(context, 50),
-                          fontWeight: FontWeight.bold),
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        "${durood.countTotalDurood}",
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold),
+                      ),
                     );
                   },
                 ),
@@ -343,7 +344,8 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Container(
                               padding: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                  color: const Color(MyColors.grey),
+                                  color: const Color(MyColors.primaryColor)
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(10)),
                               child: const Icon(
                                 LineIcons.bars,
@@ -403,7 +405,8 @@ class HomeScreenState extends State<HomeScreen> {
                           child: Container(
                               padding: const EdgeInsets.all(5),
                               decoration: BoxDecoration(
-                                  color: const Color(MyColors.grey),
+                                  color: const Color(MyColors.primaryColor)
+                                      .withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(10)),
                               child: const Icon(
                                 LineIcons.bellAlt,
@@ -419,8 +422,9 @@ class HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                       color:
                           const Color(MyColors.primaryColor).withOpacity(0.5),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
+                      borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          topLeft: Radius.circular(20))),
                   child: SizedBox(
                       width: 100,
                       height: 100,
@@ -429,61 +433,18 @@ class HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (_, int index) => pages![index % 3],
                       )),
                 ),
-                // Consumer<SliderModel>(builder: (context, sliderModel, child) {
-                //   return Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Container(
-                //         decoration: BoxDecoration(
-                //           color: sliderModel.currentPage == 0
-                //               ? const Color(MyColors.primaryColor)
-                //                   .withOpacity(0.5)
-                //               : const Color(MyColors.grey),
-                //           borderRadius:
-                //               const BorderRadius.all(Radius.circular(20)),
-                //         ),
-                //         margin: const EdgeInsets.symmetric(horizontal: 2),
-                //         width: 5,
-                //         height: 5,
-                //       ),
-                //       Container(
-                //         margin: const EdgeInsets.symmetric(horizontal: 2),
-                //         width: 5,
-                //         height: 5,
-                //         decoration: BoxDecoration(
-                //           color: sliderModel.currentPage == 1
-                //               ? const Color(MyColors.primaryColor)
-                //               : const Color(MyColors.grey),
-                //           borderRadius:
-                //               const BorderRadius.all(Radius.circular(20)),
-                //         ),
-                //       ),
-                //       Container(
-                //         margin: const EdgeInsets.symmetric(horizontal: 2),
-                //         width: 5,
-                //         height: 5,
-                //         decoration: BoxDecoration(
-                //           color: sliderModel.currentPage == 2
-                //               ? const Color(MyColors.primaryColor)
-                //                   .withOpacity(0.5)
-                //               : const Color(MyColors.grey),
-                //           borderRadius:
-                //               const BorderRadius.all(Radius.circular(20)),
-                //         ),
-                //       )
-                //     ],
-                //   );
-                // }),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 20.0, top: 20, right: 20),
+                  padding: const EdgeInsets.only(left: 20.0, top: 0, right: 20),
                   child: Container(
                     height: 50,
                     width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(
-                      color: Color(MyColors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
+                    decoration: BoxDecoration(
+                        color:
+                            const Color(MyColors.primaryColor).withOpacity(0.1),
+                        // borderRadius: const BorderRadius.all(Radius.circular(15)),
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20))),
                     child: Row(
                       children: [
                         const Padding(
@@ -492,17 +453,11 @@ class HomeScreenState extends State<HomeScreen> {
                             "DUROOD Lock Service",
                             style: TextStyle(
                                 color: Color(MyColors.primaryColor),
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: "NeoSans",
                                 fontSize: 15),
                           ),
                         ),
-                        ElevatedButton(
-                            onPressed: () async {
-                              // DuroodUtils.updateCurrentContributionId(
-                              //     context: context);
-                              // DuroodUtils.updateTotalDurood();
-                            },
-                            child: const Text("Reset try")),
                         const Spacer(),
                         FutureBuilder<bool?>(
                             future:
@@ -510,6 +465,9 @@ class HomeScreenState extends State<HomeScreen> {
                             initialData: false,
                             builder: (context, AsyncSnapshot<bool?> snapshot) {
                               return Switch(
+                                inactiveTrackColor:
+                                    const Color(MyColors.primaryColor)
+                                        .withOpacity(0.3),
                                 value: snapshot.data!,
                                 onChanged: (value) async {
                                   value == true
@@ -537,7 +495,7 @@ class HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width / 3,
+                        // width: MediaQuery.of(context).size.width / 3,
                         height: 40,
                         child: ButtonComponent(
                           icon: LineIcons.arrowCircleRight,
@@ -590,7 +548,7 @@ class HomeScreenState extends State<HomeScreen> {
                   stream: FirebaseFirestore.instance
                       .collection('durood')
                       .where("contribution_id", isEqualTo: contributionId)
-                      // .orderBy('time_stamp', descending: true)
+                      .orderBy('time_stamp', descending: true)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -601,6 +559,8 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     }
+                    // return Container();
+                    // print(snapshot.data!.docs);
                     return Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 0.0),

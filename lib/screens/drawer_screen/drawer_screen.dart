@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
@@ -11,6 +12,8 @@ import 'package:line_icons/line_icons.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../components/text_field_component.dart';
 
 class DrawerScreen extends StatefulWidget {
   const DrawerScreen({Key? key}) : super(key: key);
@@ -27,6 +30,12 @@ class DrawerScreenState extends State<DrawerScreen> {
   Widget listTileItem(IconData icon, String text, Function() fun,
       {String? count}) {
     return InkWell(
+      splashColor: text == "Logout"
+          ? Colors.red.withOpacity(0.1)
+          : const Color(MyColors.primaryColor).withOpacity(0.1),
+      highlightColor: text == "Logout"
+          ? Colors.red.withOpacity(0.2)
+          : const Color(MyColors.primaryColor).withOpacity(0.2),
       borderRadius: BorderRadius.circular(10),
       child: ListTile(
         leading: Icon(
@@ -40,6 +49,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                 text,
                 style: TextStyle(
                     fontSize: 15,
+                    fontWeight: FontWeight.w400,
                     color: text == "Logout" ? Colors.red : Colors.black38),
               )
             : Row(
@@ -119,209 +129,226 @@ class DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     Size media = MediaQuery.of(context).size;
-    return Drawer(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: media.height * 0.2,
-              width: media.width,
-              padding: const EdgeInsets.all(15.0),
-              // color: const Color(MyColors.primaryColor),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return Container(
+      height: media.height * 0.9,
+      padding: const EdgeInsets.all(10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Drawer(
+            backgroundColor: Colors.white.withOpacity(0.8),
+            child: SingleChildScrollView(
+              child: Column(
                 children: [
-                  InkWell(
-                    child: CircleAvatar(
-                      child: profileImage == null
-                          ? Container(
-                              width: media.width * 0.15,
-                              height: media.height * 0.20,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(MyColors.primaryColor),
-                              ),
-                              child: const Icon(
-                                LineIcons.user,
-                                color: Colors.white,
-                              ))
-                          : Image.file(profileImage!),
-                    ),
-                    onTap: () => getImage(),
-                  ),
-                  SizedBox(width: media.width * 0.04),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "${Provider.of<CurrentUserModel>(context, listen: false).fullName}",
-                            style: const TextStyle(
-                                color: Color(MyColors.primaryColor),
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold),
+                  Container(
+                    height: media.height * 0.15,
+                    width: media.width,
+                    padding: const EdgeInsets.all(15.0),
+                    // color: const Color(MyColors.primaryColor),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          borderRadius: BorderRadius.circular(50),
+                          child: CircleAvatar(
+                            child: profileImage == null
+                                ? Container(
+                                    width: media.width * 0.15,
+                                    height: media.height * 0.20,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Color(MyColors.primaryColor),
+                                    ),
+                                    child: const Icon(
+                                      LineIcons.user,
+                                      color: Colors.white,
+                                    ))
+                                : Image.file(profileImage!),
                           ),
-                          Visibility(
-                            visible: Provider.of<CurrentUserModel>(context,
-                                            listen: false)
-                                        .isOfficial ==
-                                    "true"
-                                ? true
-                                : false,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 2.0),
-                              child: Image.asset(
-                                  'assets/images/official_check_icon.png',
-                                  scale: 3),
+                          onTap: () => getImage(),
+                        ),
+                        SizedBox(width: media.width * 0.04),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "${Provider.of<CurrentUserModel>(context, listen: false).fullName}",
+                                  style: const TextStyle(
+                                      color: Color(MyColors.primaryColor),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Visibility(
+                                  visible: Provider.of<CurrentUserModel>(
+                                                  context,
+                                                  listen: false)
+                                              .isOfficial ==
+                                          "true"
+                                      ? true
+                                      : false,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 2.0),
+                                    child: Image.asset(
+                                        'assets/images/official_check_icon.png',
+                                        scale: 3),
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                      Text(
-                        "@${Provider.of<CurrentUserModel>(context, listen: false).userName}",
-                        style: const TextStyle(
-                            color: Color(MyColors.primaryColor), fontSize: 12),
-                      ),
-                      // Text(
-                      //   Provider.of<ProfileModel>(context, listen: false)
-                      //               .firstname ==
-                      //           null
-                      //       ? "ID: ${this.prefs?.getString("user_id") ?? ""}"
-                      //       : "ID: ${Provider.of<ProfileModel>(context, listen: false).uniqueId!}",
-                      //   style: TextStyle(
-                      //     color: Colors.white,
-                      //     fontSize: 12,
-                      //   ),
-                      // ),
-                    ],
+                            Text(
+                              "@${Provider.of<CurrentUserModel>(context, listen: false).userName}",
+                              style: const TextStyle(
+                                  color: Color(MyColors.primaryColor),
+                                  fontSize: 12),
+                            ),
+                            // Text(
+                            //   Provider.of<ProfileModel>(context, listen: false)
+                            //               .firstname ==
+                            //           null
+                            //       ? "ID: ${this.prefs?.getString("user_id") ?? ""}"
+                            //       : "ID: ${Provider.of<ProfileModel>(context, listen: false).uniqueId!}",
+                            //   style: TextStyle(
+                            //     color: Colors.white,
+                            //     fontSize: 12,
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                    child: Column(
+                      children: [
+                        listTileItem(LineIcons.user, 'Profile', () async {
+                          if (isInternetOn != true) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                'Please ensure your device is connected to the internet and try again.',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ));
+                          } else {
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => const LoginScreen()));
+                          }
+                        }),
+                        const Divider(
+                            // color: Color(0xff0674BD),
+                            ),
+                        listTileItem(LineIcons.info, 'About Us', () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()));
+                        }),
+                        listTileItem(
+                            LineIcons.clipboardList, 'Terms & Conditions', () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()));
+                        }),
+                        listTileItem(
+                            LineIcons.alternateShield, 'Privacy Policy', () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()));
+                        }),
+                        listTileItem(LineIcons.question, 'Contact Us', () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()));
+                        }),
+                        listTileItem(LineIcons.cog, 'Settings', () {
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const LoginScreen()));
+                        }),
+                        Visibility(
+                          visible: Provider.of<CurrentUserModel>(context,
+                                          listen: false)
+                                      .isOfficial ==
+                                  "true"
+                              ? true
+                              : false,
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 20),
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            height: 40,
+                            child: ButtonComponent(
+                              icon: LineIcons.alternateRedo,
+                              title: "Reset",
+                              check: false,
+                              function: () {
+                                // DuroodUtils.updateCurrentContributionId(
+                                //     context: context);
+                              },
+                            ),
+                          ),
+                        ),
+                        const Divider(),
+                        listTileItem(LineIcons.alternateSignOut, 'Logout',
+                            () async {
+                          showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                Future.delayed(const Duration(seconds: 2),
+                                    () async {
+                                  deleteSharedPreference();
+                                  await FirebaseMessaging.instance
+                                      .unsubscribeFromTopic('all');
+
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => const LoginScreen()),
+                                      (route) => false);
+                                });
+                                return AlertDialog(
+                                  title: const Text('Alert'),
+                                  content: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: const [
+                                      CircularProgressIndicator(),
+                                      Text(
+                                        "Logging Out",
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        }),
+                        Container(
+                            margin: const EdgeInsets.only(top: 50),
+                            child: const Text(
+                              "v1.0 beta",
+                              style: TextStyle(
+                                  color: Color(MyColors.greyText),
+                                  fontSize: 12),
+                            ))
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-              child: Column(
-                children: [
-                  listTileItem(LineIcons.user, 'Profile', () async {
-                    if (isInternetOn != true) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          'Please ensure your device is connected to the internet and try again.',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ));
-                    } else {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => const LoginScreen()));
-                    }
-                  }),
-                  const Divider(
-                      // color: Color(0xff0674BD),
-                      ),
-
-                  // Consumer<ResampleBookingCountModel>(
-                  //     builder: (context, counter, child) {
-                  //   return listTileItem(
-                  //     LineIcons.vials,
-                  //     'Resample requests ',
-                  //     () {
-                  //       if (isInternetOn != true) {
-                  //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  //           backgroundColor: Colors.red,
-                  //           content: const Text(
-                  //             'Please ensure your device is connected to the internet and try again.',
-                  //             style: TextStyle(color: Colors.white),
-                  //           ),
-                  //         ));
-                  //       } else
-                  //         Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //                 builder: (context) =>
-                  //                     ResmapleBookingScreen()));
-                  //     },
-                  //     count: "${counter.count}",
-                  //   );
-                  // }),
-                  listTileItem(LineIcons.info, 'About Us', () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const LoginScreen()));
-                  }),
-                  listTileItem(LineIcons.clipboardList, 'Terms & Conditions',
-                      () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const LoginScreen()));
-                  }),
-                  listTileItem(LineIcons.alternateShield, 'Privacy Policy', () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const LoginScreen()));
-                  }),
-                  listTileItem(LineIcons.question, 'Contact Us', () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const LoginScreen()));
-                  }),
-                  listTileItem(LineIcons.cog, 'Settings', () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const LoginScreen()));
-                  }),
-                  const Divider(),
-                  listTileItem(LineIcons.alternateSignOut, 'Logout', () async {
-                    showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          Future.delayed(const Duration(seconds: 2), () async {
-                            deleteSharedPreference();
-                            await FirebaseMessaging.instance
-                                .unsubscribeFromTopic('all');
-
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const LoginScreen()),
-                                (route) => false);
-                          });
-                          return AlertDialog(
-                            title: const Text('Alert'),
-                            content: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: const [
-                                CircularProgressIndicator(),
-                                Text(
-                                  "Logging Out",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          );
-                        });
-                  }),
-                  Container(
-                      margin: const EdgeInsets.only(top: 50),
-                      child: const Text(
-                        "version: v1.0",
-                        style: TextStyle(
-                            color: Color(MyColors.greyText), fontSize: 12),
-                      ))
-                ],
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );

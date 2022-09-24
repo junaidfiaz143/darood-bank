@@ -118,9 +118,10 @@ class MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           title: 'Durood Bank',
           theme: ThemeData(
-            textTheme: GoogleFonts.quicksandTextTheme(
-              Theme.of(context).textTheme,
-            ),
+            // textTheme: GoogleFonts.quicksandTextTheme(
+            //   Theme.of(context).textTheme,
+            // ),
+            fontFamily: "NeoSans",
             primarySwatch: MaterialColor(MyColors.primaryColor, color),
           ),
           home: const LoggingInScreen(),

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class TextUtils {
-  const TextUtils();
+  static double? screenWidth;
+  static double? screenHeight;
+  static double? blockSizeHorizontal;
+  static double? blockSizeVertical;
 
-  getadaptiveTextSize(BuildContext context, dynamic value) {
-    // 720 is medium screen height
-    return (value / 720) * MediaQuery.of(context).size.height;
+  static void init({required MediaQueryData? mediaQueryData}) {
+    screenWidth = mediaQueryData!.size.width;
+    screenHeight = mediaQueryData.size.height;
+    blockSizeHorizontal = screenWidth! / 100;
+    blockSizeVertical = screenHeight! / 100;
   }
 }

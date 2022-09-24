@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -137,61 +139,64 @@ class Utilities {
     required String? message,
     required Color? iconBaseColor,
   }) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Stack(
-        children: [
-          Container(
-            width: 1000,
-            padding: const EdgeInsets.only(
-              top: 66 + 16,
-              bottom: 16,
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaY: 10, sigmaX: 10),
+      child: Dialog(
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            Container(
+              width: 1000,
+              padding: const EdgeInsets.only(
+                top: 66 + 16,
+                bottom: 16,
+                left: 16,
+                right: 16,
+              ),
+              margin: const EdgeInsets.only(top: 66),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: Offset(0.0, 10.0),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // To make the card compact
+                children: <Widget>[
+                  Text(
+                    "$title",
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Text(
+                    "$message",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.elMessiri(
+                        fontSize: 16.0, color: Colors.black38),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
               left: 16,
               right: 16,
+              child: CircleAvatar(
+                backgroundColor: iconBaseColor ?? Colors.blueAccent,
+                radius: 66,
+                child: icon,
+              ),
             ),
-            margin: const EdgeInsets.only(top: 66),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: Offset(0.0, 10.0),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // To make the card compact
-              children: <Widget>[
-                Text(
-                  "$title",
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  "$message",
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.elMessiri(
-                      fontSize: 16.0, color: Colors.black38),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            left: 16,
-            right: 16,
-            child: CircleAvatar(
-              backgroundColor: iconBaseColor ?? Colors.blueAccent,
-              radius: 66,
-              child: icon,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
