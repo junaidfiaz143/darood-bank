@@ -10,18 +10,16 @@ import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/text_utils.dart';
+import 'package:durood_bank/utils/tts_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/date_symbols.dart';
 import 'package:line_icons/line_icons.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/current_user_model.dart';
 import '../../utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -42,24 +40,6 @@ class HomeScreenState extends State<HomeScreen> {
   bool? isDuroodLockServiceON;
 
   int totalDurood = 0;
-
-  // List<String> gridItemsTitle = [
-  //   "New Bookings",
-  //   "Accepted Bookings",
-  //   "History Bookings",
-  //   "Patient Bookings",
-  //   "Add Patient",
-  //   "Book Test for Patient",
-  // ];
-
-  // List<IconData> iconList = [
-  //   LineIcons.list,
-  //   LineIcons.alternateListAlt,
-  //   LineIcons.history,
-  //   LineIcons.edit,
-  //   LineIcons.userPlus,
-  //   LineIcons.vials
-  // ];
 
   List<Widget>? pages = [];
 
@@ -126,6 +106,8 @@ class HomeScreenState extends State<HomeScreen> {
 
     initAllPushNotifications();
     getDuroodPref();
+
+    TTSUtils.welcome(context: context);
 
     // getNoInternetUsername().whenComplete(() {
     //   setState(() {});
@@ -333,43 +315,10 @@ class HomeScreenState extends State<HomeScreen> {
   //   }, onError: (Object o) {});
   // }
 
-  updateTotalDurood(List<QueryDocumentSnapshot<Object?>> document) {
-    totalDurood = 0;
-    for (QueryDocumentSnapshot<Object?> d in document) {
-      if (d["contribution_id"] == contributionId) {
-        totalDurood = totalDurood + int.parse(d["contribution"].toString());
-      }
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<TotalDurooodModel>(context, listen: false)
-          .updateTotalDuroodCounter(totalDurood);
-    });
-  }
-
-  FlutterTts flutterTts = FlutterTts();
-
-  Future _speak() async {
-    List<dynamic> languages = await flutterTts.getLanguages;
-
-    debugPrint("$languages");
-
-    var installed = await flutterTts.isLanguageInstalled("ur-PK");
-
-    debugPrint("$installed");
-
-    // await flutterTts.setVoice({"locale": "ur-PK"});
-    await flutterTts.setLanguage("ur-PK");
-    var result = await flutterTts.speak(
-        "${Provider.of<CurrentUserModel>(context, listen: false).fullName}. درود بینک میں آپ کاخوش آمدید ");
-
-    if (result == 1) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     // timeDilation = 0;
 
-    _speak();
     initSlider(context);
 
     return Scaffold(
@@ -547,6 +496,13 @@ class HomeScreenState extends State<HomeScreen> {
                                 fontSize: 15),
                           ),
                         ),
+                        ElevatedButton(
+                            onPressed: () async {
+                              // DuroodUtils.updateCurrentContributionId(
+                              //     context: context);
+                              // DuroodUtils.updateTotalDurood();
+                            },
+                            child: const Text("Reset try")),
                         const Spacer(),
                         FutureBuilder<bool?>(
                             future:
@@ -570,26 +526,6 @@ class HomeScreenState extends State<HomeScreen> {
                                 },
                               );
                             }),
-                        // isDuroodLockServiceON == null
-                        //     ? const CircularProgressIndicator()
-                        //     : Switch(
-                        //         value: isDuroodLockServiceON!,
-                        //         onChanged: (v) async {
-                        //           if (v == true) {
-                        //             Utilities.duroodLockService(
-                        //                 serviceAction: Constants.keyStart);
-                        //             await Utilities.setPrefrences(
-                        //                 "DUROOD_PREFERENCE", true);
-                        //           } else {
-                        //             Utilities.duroodLockService(
-                        //                 serviceAction: Constants.keyStop);
-                        //             await Utilities.setPrefrences(
-                        //                 "DUROOD_PREFERENCE", false);
-                        //           }
-                        //           setState(() {
-                        //             isDuroodLockServiceON = v;
-                        //           });
-                        //         })
                       ],
                     ),
                   ),
@@ -653,8 +589,8 @@ class HomeScreenState extends State<HomeScreen> {
                 StreamBuilder(
                   stream: FirebaseFirestore.instance
                       .collection('durood')
-                      // .where("contribution_id", isGreaterThanOrEqualTo: 1)
-                      .orderBy('time_stamp', descending: true)
+                      .where("contribution_id", isEqualTo: contributionId)
+                      // .orderBy('time_stamp', descending: true)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -665,31 +601,13 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     }
-
-                    updateTotalDurood(snapshot.data!.docs);
-
-                    // print(snapshot.data!.docs[0]["time_stamp"]);
-                    // print(snapshot.data!.docs[1]["time_stamp"]);
-
-                    // snapshot.data!.docs.sort((a, b) => a["time_stamp"]
-                    //     .toDate()
-                    //     .compareTo(b["time_stamp"].toDate()));
-
-                    // print(snapshot.data!.docs[0]["time_stamp"]);
-                    // print(snapshot.data!.docs[1]["time_stamp"]);
-
                     return Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 0.0),
                         child: ListView(
                             shrinkWrap: true,
                             children: snapshot.data!.docs.map((document) {
-                              if (document["contribution_id"] ==
-                                  contributionId) {
-                                return getContributionItem(context, document);
-                              } else {
-                                return Container();
-                              }
+                              return getContributionItem(context, document);
                             }).toList()),
                       ),
                     );

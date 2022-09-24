@@ -1,10 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'constants.dart';
 import 'globals.dart';
@@ -56,14 +53,6 @@ class Utilities {
   static Future setPrefrences(String preferenceKey, bool preferenceVal) async {
     prefs = await SharedPreferences.getInstance();
     prefs!.setBool(preferenceKey, preferenceVal);
-  }
-
-  static getCurrentContributionId() async {
-    final QuerySnapshot contributionQuery =
-        await FirebaseFirestore.instance.collection("contribution_id").get();
-    dynamic data = contributionQuery.docs.first.data();
-    contributionId = data["current_durood_cycle"];
-    print(contributionId);
   }
 
   static showSnackBar({required String txt, required BuildContext context}) {
@@ -297,171 +286,6 @@ class Utilities {
     );
   }
 
-  static Widget showPatientDialog({
-    required BuildContext? context,
-    required String bookingNo,
-    required String firstname,
-    required String lastname,
-    required String age,
-    required String address,
-    required String contact,
-  }) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(
-              top: 66 + 16,
-              bottom: 16,
-              left: 16,
-              right: 16,
-            ),
-            margin: const EdgeInsets.only(top: 66),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: Offset(0.0, 10.0),
-                ),
-              ],
-            ),
-            child: Container(
-              margin: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(
-                          LineIcons.vial,
-                          size: 20,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Case No.",
-                              textAlign: TextAlign.start,
-                            ),
-                            Text(
-                              bookingNo,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(
-                          LineIcons.user,
-                          size: 20,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "$firstname $lastname",
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(
-                          LineIcons.calendarCheck,
-                          size: 20,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "$age years old",
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(
-                          LineIcons.mapMarker,
-                          size: 20,
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(address,
-                              // overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold)),
-                        ),
-                      )
-                    ],
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      await launch("tel:$contact");
-                    },
-                    child: Row(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(
-                            LineIcons.phone,
-                            size: 20,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(contact,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold)),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Positioned(
-            left: 16,
-            right: 16,
-            child: CircleAvatar(
-              backgroundColor: Colors.blueAccent,
-              radius: 66,
-              child: Icon(LineIcons.user, size: 64),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   static Widget showLoadingDialog({required BuildContext? context}) {
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -476,79 +300,6 @@ class Utilities {
             child: const SizedBox(
               height: 100,
               child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Widget showTestsDialog(
-      {required BuildContext? context,
-      required String bookingNo,
-      required List<Widget> expansionList}) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(
-              top: 66 + 16,
-              bottom: 16,
-              left: 16,
-              right: 16,
-            ),
-            margin: const EdgeInsets.only(top: 66),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 10.0,
-                  offset: Offset(0.0, 10.0),
-                ),
-              ],
-            ),
-            child: SizedBox(
-              // margin: EdgeInsets.all(16),
-              width: MediaQuery.of(context!).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(" Case No."),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(bookingNo,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: expansionList,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Positioned(
-            left: 16,
-            right: 16,
-            child: CircleAvatar(
-              backgroundColor: Colors.blueAccent,
-              radius: 66,
-              child: Icon(LineIcons.vials, size: 64),
             ),
           ),
         ],
@@ -654,71 +405,6 @@ class Utilities {
                           child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text("${_cities[index]}"))),
-                    );
-                  }),
-            )
-          ]),
-        ),
-      );
-    });
-  }
-
-  static StatefulWidget laboratoryDialog(BuildContext _context) {
-    List<String> _laboratories = laboratories;
-
-    return StatefulBuilder(builder: (context, setState) {
-      return Dialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-          Radius.circular(10.0),
-        )),
-        child: Container(
-          height: MediaQuery.of(_context).size.height / 2,
-          padding: const EdgeInsets.all(8.0),
-          child: Column(children: [
-            TextField(
-              onChanged: (val) {
-                List<String> filterLaboratories = laboratories
-                    .where((x) => x.toLowerCase().contains(val.toLowerCase()))
-                    .toList();
-
-                setState(() {
-                  _laboratories = filterLaboratories;
-                });
-              },
-              decoration: const InputDecoration(
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                        1, 1, 1, 1), // add padding to adjust icon
-                    child: Icon(Icons.search),
-                  ),
-                  fillColor: Color(0xFFe9e9e9),
-                  filled: true,
-                  hintText: 'Laboraties',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      borderSide: BorderSide(color: Color(0xFF2196f3)))),
-            ),
-            Expanded(
-              // height: 300,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _laboratories.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        Navigator.pop(_context, _laboratories[index]);
-                      },
-                      child: Container(
-                          padding: const EdgeInsets.all(10),
-                          margin: const EdgeInsets.all(5),
-                          child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(_laboratories[index]))),
                     );
                   }),
             )

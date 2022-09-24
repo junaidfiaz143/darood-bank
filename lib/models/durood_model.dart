@@ -1,24 +1,24 @@
 class DuroodModel {
   String? contribution;
-  String? date;
+  String? contributionId;
   String? fullName;
   bool? isOfficial;
-  String? time;
+  String? timeStamp;
   String? username;
 
   DuroodModel(
       {required this.contribution,
-      required this.date,
+      required this.contributionId,
       required this.fullName,
       required this.isOfficial,
-      required this.time,
+      required this.timeStamp,
       required this.username});
 
   DuroodModel.fromJson(Map<String, dynamic> parsedJSON)
       : contribution = parsedJSON['contribution'],
-        date = parsedJSON['date'],
+        contributionId = parsedJSON['contribution_id'],
         fullName = parsedJSON['full_name'],
         isOfficial = parsedJSON['is_official'],
-        time = parsedJSON['time'],
+        timeStamp = parsedJSON['time_stamp'],
         username = parsedJSON['username'];
 }

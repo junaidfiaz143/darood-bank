@@ -68,9 +68,21 @@ class MyApp extends StatefulWidget {
 
   @override
   MyAppState createState() => MyAppState();
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<MyAppState>()!.restartApp();
+  }
 }
 
 class MyAppState extends State<MyApp> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -98,24 +110,21 @@ class MyAppState extends State<MyApp> {
             create: (context) => TotalDurooodModel()),
         ChangeNotifierProvider<OTPCallback>(create: (context) => OTPCallback()),
         ChangeNotifierProvider<CurrentUserModel>(
-            create: (context) => CurrentUserModel(
-                city: '',
-                fullName: '',
-                isOfficial: '',
-                password: '',
-                phoneNumber: '',
-                userName: '')),
+            create: (context) => CurrentUserModel()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Durood Bank',
-        theme: ThemeData(
-          textTheme: GoogleFonts.quicksandTextTheme(
-            Theme.of(context).textTheme,
+      child: KeyedSubtree(
+        key: key,
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Durood Bank',
+          theme: ThemeData(
+            textTheme: GoogleFonts.quicksandTextTheme(
+              Theme.of(context).textTheme,
+            ),
+            primarySwatch: MaterialColor(MyColors.primaryColor, color),
           ),
-          primarySwatch: MaterialColor(MyColors.primaryColor, color),
+          home: const LoggingInScreen(),
         ),
-        home: const LoggingInScreen(),
       ),
     );
   }

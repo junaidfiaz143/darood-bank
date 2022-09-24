@@ -7,6 +7,7 @@ import 'package:durood_bank/screens/home_screen/home_screen.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
 import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/durood_utils.dart';
 import 'package:durood_bank/utils/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -136,7 +137,7 @@ class _LoggingInScreenState extends State<LoggingInScreen>
 
   @override
   void initState() {
-    Utilities.getCurrentContributionId();
+    DuroodUtils.getCurrentContributionId(context: context);
     _controller =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
 
