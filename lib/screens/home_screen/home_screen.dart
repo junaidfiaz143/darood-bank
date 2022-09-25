@@ -8,6 +8,7 @@ import 'package:durood_bank/models/total_durood_model.dart';
 import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
+import 'package:durood_bank/utils/durood_utils.dart';
 import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/tts_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
@@ -524,6 +525,7 @@ class HomeScreenState extends State<HomeScreen> {
                                               'You have contributed to the bank',
                                           message: 'شکریہ');
                                     });
+                                DuroodUtils.updateTotalDurood(context: context);
                               }
                             });
                           },
@@ -567,7 +569,11 @@ class HomeScreenState extends State<HomeScreen> {
                         child: ListView(
                             shrinkWrap: true,
                             children: snapshot.data!.docs.map((document) {
-                              return getContributionItem(context, document);
+                              try {
+                                return getContributionItem(context, document);
+                              } catch (e) {
+                                return Container();
+                              }
                             }).toList()),
                       ),
                     );

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:durood_bank/components/slider_component.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/globals.dart';
@@ -6,7 +7,6 @@ import 'package:durood_bank/utils/no_scroll_glow_behavior.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:horizontal_picker/horizontal_picker.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +50,17 @@ class CounterScreenState extends State<CounterScreen> {
       Utilities.showSnackBar(
           txt: "Recite درود atleast 100 times", context: context);
     }
+  }
+
+  late FixedExtentScrollController fixedExtentScrollController;
+  int sliderLength = 101;
+  late int selectedFatValue;
+  @override
+  void initState() {
+    selectedFatValue = 0;
+    fixedExtentScrollController = FixedExtentScrollController(initialItem: 0);
+
+    super.initState();
   }
 
   @override

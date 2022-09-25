@@ -50,7 +50,6 @@ dependencies:
   line_icons: ^2.0.1
   url_launcher: ^6.0.17
   connectivity_plus: ^2.1.0
-  horizontal_picker: ^1.2.0
   ntp: ^2.0.0
   flutter_tts: ^3.5.3  
   sizer: ^2.0.15
@@ -81,6 +80,7 @@ flutter:
   assets:
     - assets/images/
     - assets/knock_brush.mp3
+    # - assets/svgs/
 
   fonts:
     - family: NeoSans

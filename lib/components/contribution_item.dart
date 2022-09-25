@@ -133,14 +133,6 @@ Widget getContributionItem(
                               ),
                             ),
                           ),
-                          // Text(
-                          //   DateFormat('dd-MM-yyyy • hh:mm a')
-                          //       .format(contribution['time_stamp'].toDate()),
-                          //   style: const TextStyle(
-                          //       fontWeight: FontWeight.w300,
-                          //       fontSize: 10,
-                          //       color: Colors.white),
-                          // )
                         ],
                       ),
                     )
