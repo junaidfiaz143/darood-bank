@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
+import 'package:durood_bank/screens/profile_screen/profile_screen.dart';
 import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -50,7 +51,9 @@ class DrawerScreenState extends State<DrawerScreen> {
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
-                    color: text == "Logout" ? Colors.red : Colors.black38),
+                    color: text == "Logout"
+                        ? Colors.red
+                        : const Color(MyColors.primaryColor)),
               )
             : Row(
                 children: [
@@ -135,7 +138,7 @@ class DrawerScreenState extends State<DrawerScreen> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Drawer(
             backgroundColor: Colors.white.withOpacity(0.8),
             child: SingleChildScrollView(
@@ -236,10 +239,11 @@ class DrawerScreenState extends State<DrawerScreen> {
                               ),
                             ));
                           } else {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => const LoginScreen()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ProfileScreen()));
                           }
                         }),
                         const Divider(
@@ -251,8 +255,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                           //     MaterialPageRoute(
                           //         builder: (context) => const LoginScreen()));
                         }),
-                        listTileItem(
-                            LineIcons.clipboardList, 'Terms & Conditions', () {
+                        listTileItem(LineIcons.comment, 'Feedback', () {
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
@@ -265,7 +268,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                           //     MaterialPageRoute(
                           //         builder: (context) => const LoginScreen()));
                         }),
-                        listTileItem(LineIcons.question, 'Contact Us', () {
+                        listTileItem(LineIcons.envelope, 'Contact Us', () {
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
@@ -336,10 +339,11 @@ class DrawerScreenState extends State<DrawerScreen> {
                         }),
                         Container(
                             margin: const EdgeInsets.only(top: 50),
-                            child: const Text(
+                            child: Text(
                               "v1.0 beta",
                               style: TextStyle(
-                                  color: Color(MyColors.greyText),
+                                  color: const Color(MyColors.primaryColor)
+                                      .withOpacity(0.4),
                                   fontSize: 12),
                             ))
                       ],

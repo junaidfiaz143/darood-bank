@@ -140,6 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // resizeToAvoidBottomInset: false,
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
         return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: SizedBox(
             width: double.infinity,
             height: size.height,

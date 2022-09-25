@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/components/contribution_item.dart';
@@ -30,7 +31,8 @@ class HomeScreen extends StatefulWidget {
   HomeScreenState createState() => HomeScreenState();
 }
 
-class HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   StreamSubscription<ConnectivityResult>? _connectivitySubscription;
 
   bool? isInternetOn = false;
@@ -100,9 +102,25 @@ class HomeScreenState extends State<HomeScreen> {
     await FirebaseMessaging.instance.subscribeToTopic('all');
   }
 
+  AnimationController? controller;
+  Animation<Offset>? offset;
+
+  bool? dockVisible = false;
   @override
   void initState() {
     super.initState();
+
+    controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+
+    offset = Tween<Offset>(begin: Offset.zero, end: const Offset(0.0, 1.0))
+        .animate(controller!);
+
+    controller!.forward().whenComplete(() {
+      setState(() {
+        dockVisible = true;
+      });
+    });
 
     initAllPushNotifications();
     getDuroodPref();
@@ -263,63 +281,13 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // bool isDialogOpen = false;
-
-  // void checkUpdateOld() async {
-  //   final DatabaseReference databaseRef =
-  //       FirebaseDatabase.instance.reference().child('messages');
-
-  //   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-
-  //   databaseRef.onValue.listen((Event event) {
-  //     if (packageInfo.buildNumber.toString() !=
-  //         event.snapshot.value["buildVersion"]) {
-  //       isDialogOpen = true;
-  //       showDialog(
-  //         barrierDismissible: false,
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return WillPopScope(
-  //             onWillPop: () => Future.value(false),
-  //             child: AlertDialog(
-  //               title: new Text("Update Alert"),
-  //               content: new SingleChildScrollView(
-  //                 child: Column(
-  //                   children: [
-  //                     Text(
-  //                         "Kindly update to the latest version available on play store.")
-  //                   ],
-  //                 ),
-  //               ),
-  //               actions: <Widget>[
-  //                 new TextButton(
-  //                   child: new Text("Update"),
-  //                   onPressed: () async {
-  //                     String url =
-  //                         "https://play.google.com/store/apps/details?id=com.virtuallab.phlebotomist";
-  //                     if (await canLaunch(url)) {
-  //                       await launch(url, forceWebView: false);
-  //                     } else {
-  //                       throw 'Could not launch $url';
-  //                     }
-  //                   },
-  //                 ),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     } else {
-  //       if (isDialogOpen == true) {
-  //         Navigator.pop(context);
-  //       }
-  //     }
-  //   }, onError: (Object o) {});
-  // }
-
   @override
   Widget build(BuildContext context) {
     // timeDilation = 0;
+
+    Future.delayed(const Duration(seconds: 1), () {
+      controller!.reverse();
+    });
 
     initSlider(context);
 
@@ -370,6 +338,7 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                         InkResponse(
                           onTap: () {
+                            controller!.reverse();
                             // pageTimer!.cancel();
                             if (isInternetOn != true) {
                               showDialog(
@@ -503,30 +472,35 @@ class HomeScreenState extends State<HomeScreen> {
                           title: "Contribute",
                           check: false,
                           function: () {
-                            Navigator.of(context)
-                                .push(
-                              MaterialPageRoute(
-                                builder: (context) => const CounterScreen(),
-                              ),
-                            )
-                                .then((value) {
-                              if (value != null) {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Utilities.showCustomDialogNew(
-                                          context: context,
-                                          icon: const Icon(
-                                            LineIcons.doubleCheck,
-                                            size: 64,
-                                          ),
-                                          iconBaseColor: Colors.green.shade100,
-                                          title:
-                                              'You have contributed to the bank',
-                                          message: 'شکریہ');
-                                    });
-                                DuroodUtils.updateTotalDurood(context: context);
-                              }
+                            controller!.forward().whenComplete(() {
+                              Navigator.of(context)
+                                  .push(
+                                MaterialPageRoute(
+                                  builder: (context) => const CounterScreen(),
+                                ),
+                              )
+                                  .then((value) {
+                                controller!.reverse();
+                                if (value != null) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Utilities.showCustomDialogNew(
+                                            context: context,
+                                            icon: const Icon(
+                                              LineIcons.doubleCheck,
+                                              size: 64,
+                                            ),
+                                            iconBaseColor:
+                                                Colors.green.shade100,
+                                            title:
+                                                'You have contributed to the bank',
+                                            message: 'شکریہ');
+                                      });
+                                  DuroodUtils.updateTotalDurood(
+                                      context: context);
+                                }
+                              });
                             });
                           },
                         ),
@@ -564,17 +538,136 @@ class HomeScreenState extends State<HomeScreen> {
                     // return Container();
                     // print(snapshot.data!.docs);
                     return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 0.0),
-                        child: ListView(
-                            shrinkWrap: true,
-                            children: snapshot.data!.docs.map((document) {
-                              try {
-                                return getContributionItem(context, document);
-                              } catch (e) {
-                                return Container();
-                              }
-                            }).toList()),
+                      child: Stack(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 0.0),
+                            child: ListView(
+                                shrinkWrap: true,
+                                children: snapshot.data!.docs.map((document) {
+                                  try {
+                                    return getContributionItem(
+                                        context, document);
+                                  } catch (e) {
+                                    return Container();
+                                  }
+                                }).toList()),
+                          ),
+                          Visibility(
+                            visible: dockVisible!,
+                            child: Positioned.fill(
+                              child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: SlideTransition(
+                                    position: offset!,
+                                    child: Container(
+                                      margin: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          border: Border.all(
+                                              color: const Color(MyColors.grey)
+                                                  .withOpacity(0.2))),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: BackdropFilter(
+                                          filter: ImageFilter.blur(
+                                              sigmaX: 20, sigmaY: 20),
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withOpacity(0.7)),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Container(
+                                                    // color: Colors.red,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20),
+                                                    child: const Icon(
+                                                      LineIcons.filter,
+                                                      color: Color(MyColors
+                                                          .primaryColor),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    print("filter");
+                                                  },
+                                                ),
+                                                InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Container(
+                                                    // color: Colors.red,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20),
+                                                    child: const Icon(
+                                                      LineIcons.barChart,
+                                                      color: Color(MyColors
+                                                          .primaryColor),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    print("stats");
+                                                  },
+                                                ),
+                                                InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Container(
+                                                    // color: Colors.red,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20),
+                                                    child: const Icon(
+                                                      LineIcons.users,
+                                                      color: Color(MyColors
+                                                          .primaryColor),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    print("community");
+                                                  },
+                                                ),
+                                                InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Container(
+                                                    // color: Colors.red,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20),
+                                                    child: const Icon(
+                                                      LineIcons.bars,
+                                                      color: Color(MyColors
+                                                          .primaryColor),
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    _scaffoldKey.currentState!
+                                                        .openDrawer();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )),
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   },

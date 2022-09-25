@@ -172,6 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       // resizeToAvoidBottomInset: false,
       body: Consumer<LoginStateModel>(builder: (_, model, child) {
         return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.only(top: 70.0, bottom: 0),
             child: IntrinsicHeight(
