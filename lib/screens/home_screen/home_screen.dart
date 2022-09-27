@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/constants.dart';
+import '../profile_screen/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool? isDialogOpen;
@@ -54,25 +55,12 @@ class HomeScreenState extends State<HomeScreen>
 
   SharedPreferences? prefs;
 
-  List<int> colors = [
-    0xFFE0F7FF,
-    0xFFBFEFC5,
-    0xFFD9E4F8,
-    0xFFFEF8D4,
-    0xFFFFE9D4,
-    0xFFE8F8ED
-  ];
-
-  List<Color> iconColors = [
-    Colors.blue.shade800,
-    Colors.green.shade800,
-    Colors.indigo.shade800,
-    Colors.yellow.shade800,
-    Colors.orange.shade800,
-    Colors.teal.shade800
-  ];
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  static AnimationController? controller;
+  Animation<Offset>? offset;
+
+  bool? dockVisible = false;
 
   // startSlider() {
   //   pageTimer = Timer.periodic(const Duration(seconds: 3), (pageTimer) {
@@ -102,10 +90,6 @@ class HomeScreenState extends State<HomeScreen>
     await FirebaseMessaging.instance.subscribeToTopic('all');
   }
 
-  AnimationController? controller;
-  Animation<Offset>? offset;
-
-  bool? dockVisible = false;
   @override
   void initState() {
     super.initState();
@@ -293,7 +277,16 @@ class HomeScreenState extends State<HomeScreen>
 
     return Scaffold(
         key: _scaffoldKey,
-        drawer: const DrawerScreen(),
+        drawer: DrawerScreen(
+          scaffoldKey: _scaffoldKey,
+          function: (String screenRoute) {
+            controller!.forward().whenComplete(() {
+              Navigator.pushNamed(context, screenRoute).then((value) {
+                HomeScreenState.controller!.reverse();
+              });
+            });
+          },
+        ),
         body: SafeArea(
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
@@ -358,19 +351,7 @@ class HomeScreenState extends State<HomeScreen>
                                     );
                                   }).then((value) => isDialogOpen = false);
                               isDialogOpen = true;
-                            } else {
-                              // Navigator.of(context)
-                              //     .push(
-                              //   MaterialPageRoute(
-                              //     builder: (context) => const CounterScreen(),
-                              //   ),
-                              // )
-                              //     .then((value) {
-                              //   // if (pageTimer!.isActive == false) {
-                              //   //   startSlider();
-                              //   // }
-                              // });
-                            }
+                            } else {}
                           },
                           child: Container(
                               padding: const EdgeInsets.all(5),
@@ -473,13 +454,10 @@ class HomeScreenState extends State<HomeScreen>
                           check: false,
                           function: () {
                             controller!.forward().whenComplete(() {
-                              Navigator.of(context)
-                                  .push(
-                                MaterialPageRoute(
-                                  builder: (context) => const CounterScreen(),
-                                ),
-                              )
-                                  .then((value) {
+                              Navigator.pushNamed(
+                                context,
+                                "/counterScreen",
+                              ).then((value) {
                                 controller!.reverse();
                                 if (value != null) {
                                   showDialog(

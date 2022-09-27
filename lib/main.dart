@@ -3,7 +3,10 @@ import 'dart:io';
 import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/models/otp_callback_model.dart';
 import 'package:durood_bank/models/slider_model.dart';
+import 'package:durood_bank/screens/about_screen/about_screen.dart';
+import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/logging_in_screen/logging_in_screen.dart';
+import 'package:durood_bank/screens/profile_screen/profile_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/utilities.dart';
@@ -11,7 +14,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'models/login_state_model.dart';
@@ -116,7 +118,7 @@ class MyAppState extends State<MyApp> {
         key: key,
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Durood Bank',
+          title: "Durood Bank",
           theme: ThemeData(
             // textTheme: GoogleFonts.quicksandTextTheme(
             //   Theme.of(context).textTheme,
@@ -124,7 +126,14 @@ class MyAppState extends State<MyApp> {
             fontFamily: "NeoSans",
             primarySwatch: MaterialColor(MyColors.primaryColor, color),
           ),
-          home: const LoggingInScreen(),
+          // home: const LoggingInScreen(),
+          initialRoute: "/",
+          routes: {
+            "/": (context) => const LoggingInScreen(),
+            "/profileScreen": (context) => const ProfileScreen(),
+            "/counterScreen": (context) => const CounterScreen(),
+            "/aboutScreen": (context) => const AboutScreen()
+          },
         ),
       ),
     );

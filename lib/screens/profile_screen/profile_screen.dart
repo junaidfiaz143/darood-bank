@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:provider/provider.dart';
 
+import '../../models/current_user_model.dart';
 import '../../utils/colors.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -10,10 +12,10 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SingleChildScrollView(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
@@ -106,9 +108,9 @@ class ProfileScreen extends StatelessWidget {
                                   const SizedBox(
                                     height: 80,
                                   ),
-                                  const Text(
-                                    'Muhammad Junaid Fiaz',
-                                    style: TextStyle(
+                                  Text(
+                                    "${Provider.of<CurrentUserModel>(context, listen: false).fullName}",
+                                    style: const TextStyle(
                                       color: Color(MyColors.primaryColor),
                                       fontSize: 20,
                                     ),
@@ -173,7 +175,7 @@ class ProfileScreen extends StatelessWidget {
                                         ],
                                       ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             ),
@@ -210,10 +212,69 @@ class ProfileScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                profileInfoWidget(
+                    label:
+                        "${Provider.of<CurrentUserModel>(context, listen: false).phoneNumber}",
+                    icon: LineIcons.phone),
+                profileInfoWidget(
+                    label:
+                        "${Provider.of<CurrentUserModel>(context, listen: false).gender}",
+                    icon: Provider.of<CurrentUserModel>(context, listen: false)
+                                .gender ==
+                            "Male"
+                        ? LineIcons.male
+                        : LineIcons.female),
+                profileInfoWidget(
+                    label:
+                        "${Provider.of<CurrentUserModel>(context, listen: false).city}",
+                    icon: LineIcons.city),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  profileInfoWidget({required String label, required IconData icon}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: TextFormField(
+        enabled: false,
+        textInputAction: TextInputAction.next,
+        decoration: InputDecoration(
+            prefixIcon: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  1, 1, 1, 1), // add padding to adjust icon
+              child: Icon(
+                icon,
+                color: const Color(MyColors.primaryColor),
+              ),
+            ),
+            fillColor: const Color(MyColors.primaryColor).withOpacity(0.3),
+            filled: true,
+            label: Text(
+              label,
+              style: const TextStyle(color: Color(MyColors.primaryColor)),
+            ),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                borderSide: BorderSide(color: Color(MyColors.primaryColor)))),
+        keyboardType: TextInputType.phone,
+        onChanged: (value) {
+          // _phoneNumber = value;
+        },
+        validator: (value) {
+          // print(value);
+          if (value!.length == 11) {
+            return null;
+          }
+          return 'Please Enter Valid Phone Number';
+        },
       ),
     );
   }

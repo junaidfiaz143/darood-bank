@@ -9,17 +9,13 @@ savePreferences(dynamic data) async {
   List<String> userData = [];
   userData.insert(0, data["full_name"]);
   userData.insert(1, data["username"]);
-  userData.insert(2, "${data["is_official"]}");
+  userData.insert(2, data["is_official"].toString());
   userData.insert(3, data["phone_number"]);
   userData.insert(4, data["city"]);
   userData.insert(5, data["password"]);
+  userData.insert(6, data["gender"]);
 
   _preferences.setStringList("userData", userData);
-}
-
-saveBitmojiSyncPreferences(bool data) async {
-  SharedPreferences _preferences = await SharedPreferences.getInstance();
-  _preferences.setBool("bitmojiSync", data);
 }
 
 deleteSharedPreference() async {

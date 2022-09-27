@@ -12,14 +12,14 @@ import 'package:provider/provider.dart';
 
 import '../../models/current_user_model.dart';
 
-class CounterScreen extends StatefulWidget {
-  const CounterScreen({Key? key}) : super(key: key);
+class AboutScreen extends StatefulWidget {
+  const AboutScreen({Key? key}) : super(key: key);
 
   @override
-  CounterScreenState createState() => CounterScreenState();
+  AboutScreenState createState() => AboutScreenState();
 }
 
-class CounterScreenState extends State<CounterScreen> {
+class AboutScreenState extends State<AboutScreen> {
   double _daroodCounter = 0;
 
   makeContribution() {
@@ -101,7 +101,7 @@ class CounterScreenState extends State<CounterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          "Counter",
+                          "About Us",
                           style: TextStyle(
                               color: Color(MyColors.primaryColor),
                               fontWeight: FontWeight.bold,
@@ -129,65 +129,72 @@ class CounterScreenState extends State<CounterScreen> {
                   ]),
             ),
             const Spacer(),
-            Text("درودکاؤنٹر",
-                style: GoogleFonts.elMessiri(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(MyColors.primaryColor))),
-            Container(
-              width: Size.infinite.width,
-              margin: const EdgeInsets.symmetric(horizontal: 26),
-              padding: const EdgeInsets.all(36),
-              decoration: BoxDecoration(
-                color: const Color(MyColors.primaryColor).withOpacity(0.3),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                "${_daroodCounter.toInt()}",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: Color(MyColors.primaryColor),
-                    fontSize: 56,
-                    fontWeight: FontWeight.bold),
-              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("درود بینک کے بانی",
+                  style: GoogleFonts.elMessiri(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(MyColors.primaryColor))),
             ),
-            const Spacer(),
-            SizedBox(
-              width: 200,
-              height: 45,
-              child: ButtonComponent(
-                title: "Contribute",
-                check: false,
-                icon: LineIcons.arrowCircleUp,
-                function: () {
-                  makeContribution();
-                },
-              ),
+
+            // const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: MediaQuery.of(context).size.width * 0.6,
+                        padding: const EdgeInsets.all(1),
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: const Color(MyColors.primaryColor)
+                                .withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.asset(
+                            "assets/images/haji_m_fiaz.jpeg",
+                            fit: BoxFit.fill,
+                          ),
+                        )),
+                    Text(
+                      "حاجی محمد فیاض",
+                      style: GoogleFonts.elMessiri(
+                          color: const Color(MyColors.primaryColor)),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: MediaQuery.of(context).size.width * 0.6,
+                        padding: const EdgeInsets.all(1),
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: const Color(MyColors.primaryColor)
+                                .withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.asset(
+                            "assets/images/haji_m_muneer.png",
+                            fit: BoxFit.fill,
+                          ),
+                        )),
+                    Text(
+                      "حاجی منیر احمد",
+                      style: GoogleFonts.elMessiri(
+                          color: const Color(MyColors.primaryColor)),
+                    )
+                  ],
+                )
+              ],
             ),
-            Container(
-              margin: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(MyColors.grey),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ScrollConfiguration(
-                behavior: NoScrollGlowBehavior(),
-                child: HorizontalPicker(
-                    minValue: 0,
-                    maxValue: 100000,
-                    divisions: 1000,
-                    height: 100,
-                    showCursor: false,
-                    backgroundColor: Colors.transparent,
-                    activeItemTextColor: const Color(MyColors.primaryColor),
-                    initialPosition: InitialPosition.start,
-                    onChanged: (value) {
-                      setState(() {
-                        _daroodCounter = value;
-                      });
-                    }),
-              ),
-            )
+            const Spacer()
           ],
         ),
       ),

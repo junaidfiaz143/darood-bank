@@ -6,6 +6,7 @@ class CurrentUserModel extends ChangeNotifier {
   String? isOfficial;
   String? phoneNumber;
   String? city;
+  String? gender;
   String? password;
   CurrentUserModel(
       {this.fullName,
@@ -13,6 +14,7 @@ class CurrentUserModel extends ChangeNotifier {
       this.isOfficial,
       this.phoneNumber,
       this.city,
+      this.gender,
       this.password});
 
   get getFullName => fullName;

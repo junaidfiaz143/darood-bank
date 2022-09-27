@@ -49,6 +49,7 @@ class _LoggingInScreenState extends State<LoggingInScreen>
             });
 
             if (loginQuery.docs.isNotEmpty) {
+              print(loginQuery.docs.first.data());
               savePreferences(loginQuery.docs.first.data());
               loadDetails().then((value) {
                 if (value != null) {
@@ -61,9 +62,11 @@ class _LoggingInScreenState extends State<LoggingInScreen>
                   Provider.of<CurrentUserModel>(context, listen: false)
                       .phoneNumber = value[3];
                   Provider.of<CurrentUserModel>(context, listen: false).city =
-                      value[3];
+                      value[4];
                   Provider.of<CurrentUserModel>(context, listen: false)
-                      .password = value[4];
+                      .password = value[5];
+                  Provider.of<CurrentUserModel>(context, listen: false).gender =
+                      value[6];
 
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(

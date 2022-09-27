@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/screens/login_screen/login_screen.dart';
-import 'package:durood_bank/screens/profile_screen/profile_screen.dart';
 import 'package:durood_bank/services/login_service.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,7 +16,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../components/text_field_component.dart';
 
 class DrawerScreen extends StatefulWidget {
-  const DrawerScreen({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldState> scaffoldKey;
+  final Function? function;
+  const DrawerScreen({Key? key, required this.scaffoldKey, this.function})
+      : super(key: key);
 
   @override
   DrawerScreenState createState() => DrawerScreenState();
@@ -239,17 +241,16 @@ class DrawerScreenState extends State<DrawerScreen> {
                               ),
                             ));
                           } else {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ProfileScreen()));
+                            widget.scaffoldKey.currentState!.closeDrawer();
+                            widget.function!("/profileScreen");
                           }
                         }),
                         const Divider(
                             // color: Color(0xff0674BD),
                             ),
                         listTileItem(LineIcons.info, 'About Us', () {
+                          widget.scaffoldKey.currentState!.closeDrawer();
+                          widget.function!("/aboutScreen");
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
@@ -338,14 +339,15 @@ class DrawerScreenState extends State<DrawerScreen> {
                               });
                         }),
                         Container(
-                            margin: const EdgeInsets.only(top: 50),
+                            margin: const EdgeInsets.only(top: 50, bottom: 0),
                             child: Text(
                               "v1.0 beta",
                               style: TextStyle(
                                   color: const Color(MyColors.primaryColor)
                                       .withOpacity(0.4),
                                   fontSize: 12),
-                            ))
+                            )),
+                        SizedBox(width: media.width * 0.04),
                       ],
                     ),
                   )

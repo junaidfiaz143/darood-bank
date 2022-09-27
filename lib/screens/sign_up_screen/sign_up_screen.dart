@@ -242,7 +242,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (value!.length == 11) {
                                 return null;
                               }
-                              return 'Please Enter Valid Phone Number';
+                              return 'Please Enter Valid Full Name';
                             },
                           ),
                           SizedBox(height: size.height * 0.01),
@@ -431,7 +431,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (value!.length == 11) {
                                 return null;
                               }
-                              return 'Please Enter Valid Phone Number';
+                              return 'Please Enter Valid Password';
                             },
                           ),
                           SizedBox(height: size.height * 0.01),
