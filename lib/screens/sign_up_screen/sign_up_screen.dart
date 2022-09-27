@@ -501,10 +501,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               if (_password == _rePassword) {
                                 await generateUsername();
                               } else {
-                                //TODO: password not matched
+                                debugPrint("Password not matched");
                               }
                             } else {
-                              //TODO: empty fields
+                              debugPrint("empty fields");
                             }
                           },
                           title: 'SIGNUP',

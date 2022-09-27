@@ -87,7 +87,7 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
             .signInWithCredential(credential)
             .then((value) async {
           if (value.user != null) {
-            print("logged in");
+            debugPrint("logged in");
             // FirebaseAuth.instance.signOut();
             NotificationUtils.sendPushNotification(
                 title: "Durood Bank",
@@ -108,20 +108,20 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
           }
         });
 
-        print("otp verified ${credential.smsCode}");
+        debugPrint("otp verified ${credential.smsCode}");
       },
       codeAutoRetrievalTimeout: (String verificationId) {
-        print("otp timeout $verificationId");
+        debugPrint("otp timeout $verificationId");
       },
       codeSent: (String verificationId, int? forceResendingToken) {
-        print("otp code sent");
+        debugPrint("otp code sent");
 
         setState(() {
           verificationCode = verificationId;
         });
       },
       verificationFailed: (FirebaseAuthException error) {
-        print("otp failed $error");
+        debugPrint("otp failed $error");
       },
     );
   }
@@ -133,7 +133,7 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
               smsCode: otpCode, verificationId: verificationCode))
           .then((value) {
         if (value.user != null) {
-          print("logged in");
+          debugPrint("logged in");
           // FirebaseAuth.instance.signOut();
           NotificationUtils.sendPushNotification(
               title: "Durood Bank",
@@ -156,12 +156,12 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
             isOTPVerified = true;
           });
         } else {
-          print("invalid pin");
+          debugPrint("invalid pin");
         }
       });
     } catch (e) {
-      print(e);
-      print("invalid pin");
+      debugPrint(e.toString());
+      debugPrint("invalid pin");
     }
   }
 
@@ -208,7 +208,7 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
                                 fontWeight: FontWeight.bold))),
                     GestureDetector(
                       onLongPress: () {
-                        // print(_formKey.currentState!.validate());
+                        // debugPrint(_formKey.currentState!.validate());
                       },
                       child: PinPut(
                         validator: (s) {
@@ -333,7 +333,7 @@ class OTPVerifyScreenState extends State<OTPVerifyScreen> {
     }
 
     FirebaseAuth.instance.authStateChanges().listen((event) {
-      print(event);
+      debugPrint(event.toString());
     });
   }
 

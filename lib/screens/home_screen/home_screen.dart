@@ -6,12 +6,10 @@ import 'package:durood_bank/components/contribution_item.dart';
 import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/models/slider_model.dart';
 import 'package:durood_bank/models/total_durood_model.dart';
-import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
 import 'package:durood_bank/screens/drawer_screen/drawer_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/durood_utils.dart';
 import 'package:durood_bank/utils/globals.dart';
-import 'package:durood_bank/utils/tts_utils.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +20,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../utils/constants.dart';
-import '../profile_screen/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool? isDialogOpen;
@@ -109,7 +106,7 @@ class HomeScreenState extends State<HomeScreen>
     initAllPushNotifications();
     getDuroodPref();
 
-    TTSUtils.welcome(context: context);
+    // TTSUtils.welcome(context: context);
 
     // getNoInternetUsername().whenComplete(() {
     //   setState(() {});
@@ -578,7 +575,7 @@ class HomeScreenState extends State<HomeScreen>
                                                     ),
                                                   ),
                                                   onTap: () {
-                                                    print("filter");
+                                                    debugPrint("filter");
                                                   },
                                                 ),
                                                 InkWell(
@@ -596,7 +593,7 @@ class HomeScreenState extends State<HomeScreen>
                                                     ),
                                                   ),
                                                   onTap: () {
-                                                    print("stats");
+                                                    debugPrint("stats");
                                                   },
                                                 ),
                                                 InkWell(
@@ -614,7 +611,7 @@ class HomeScreenState extends State<HomeScreen>
                                                     ),
                                                   ),
                                                   onTap: () {
-                                                    print("community");
+                                                    debugPrint("community");
                                                   },
                                                 ),
                                                 InkWell(

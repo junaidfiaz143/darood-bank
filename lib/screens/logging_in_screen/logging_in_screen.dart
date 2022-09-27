@@ -49,7 +49,6 @@ class _LoggingInScreenState extends State<LoggingInScreen>
             });
 
             if (loginQuery.docs.isNotEmpty) {
-              print(loginQuery.docs.first.data());
               savePreferences(loginQuery.docs.first.data());
               loadDetails().then((value) {
                 if (value != null) {

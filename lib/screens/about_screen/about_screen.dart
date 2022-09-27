@@ -1,16 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:durood_bank/components/slider_component.dart';
-import 'package:durood_bank/components/text_field_component.dart';
 import 'package:durood_bank/utils/colors.dart';
-import 'package:durood_bank/utils/globals.dart';
-import 'package:durood_bank/utils/no_scroll_glow_behavior.dart';
-import 'package:durood_bank/utils/utilities.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:provider/provider.dart';
-
-import '../../models/current_user_model.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({Key? key}) : super(key: key);
@@ -20,38 +11,6 @@ class AboutScreen extends StatefulWidget {
 }
 
 class AboutScreenState extends State<AboutScreen> {
-  double _daroodCounter = 0;
-
-  makeContribution() {
-    if (_daroodCounter >= 100) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Utilities.showLoadingDialog(context: context);
-          });
-      FirebaseFirestore.instance.collection("durood").doc().set({
-        "full_name":
-            Provider.of<CurrentUserModel>(context, listen: false).fullName,
-        "username":
-            Provider.of<CurrentUserModel>(context, listen: false).userName,
-        "is_official":
-            Provider.of<CurrentUserModel>(context, listen: false).isOfficial ==
-                    "true"
-                ? true
-                : false,
-        "contribution": "${_daroodCounter.round()}",
-        "time_stamp": FieldValue.serverTimestamp(),
-        "contribution_id": contributionId
-      }).whenComplete(() {
-        Navigator.pop(context);
-        Navigator.pop(context, "contributed");
-      });
-    } else {
-      Utilities.showSnackBar(
-          txt: "Recite درود atleast 100 times", context: context);
-    }
-  }
-
   late FixedExtentScrollController fixedExtentScrollController;
   int sliderLength = 101;
   late int selectedFatValue;
@@ -66,13 +25,6 @@ class AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
-      // appBar: AppBar(
-      //   centerTitle: true,
-      //   backgroundColor: Colors.transparent,
-      //   foregroundColor: const Color(MyColors.primaryColor),
-      //   elevation: 0,
-      //   title: const Text("Counter"),
-      // ),
       body: SafeArea(
         child: Column(
           children: [
@@ -137,8 +89,6 @@ class AboutScreenState extends State<AboutScreen> {
                       fontWeight: FontWeight.w700,
                       color: const Color(MyColors.primaryColor))),
             ),
-
-            // const Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
