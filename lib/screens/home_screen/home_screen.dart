@@ -54,7 +54,7 @@ class HomeScreenState extends State<HomeScreen>
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static AnimationController? controller;
+  AnimationController? controller;
   Animation<Offset>? offset;
 
   bool? dockVisible = false;
@@ -279,7 +279,7 @@ class HomeScreenState extends State<HomeScreen>
           function: (String screenRoute) {
             controller!.forward().whenComplete(() {
               Navigator.pushNamed(context, screenRoute).then((value) {
-                HomeScreenState.controller!.reverse();
+                controller!.reverse();
               });
             });
           },

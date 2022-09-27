@@ -199,10 +199,10 @@ class ProfileScreen extends StatelessWidget {
                                   decoration: BoxDecoration(
                                       color: const Color(MyColors.primaryColor)
                                           .withOpacity(1),
-                                      borderRadius: BorderRadius.circular(20)),
+                                      borderRadius: BorderRadius.circular(30)),
                                   child: const Icon(
                                     LineIcons.user,
-                                    size: 32,
+                                    size: 48,
                                     color: Colors.white,
                                   )),
                             ),
