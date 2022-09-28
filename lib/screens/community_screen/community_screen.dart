@@ -2,14 +2,14 @@ import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 
-class PrivacyPolicyScreen extends StatefulWidget {
-  const PrivacyPolicyScreen({Key? key}) : super(key: key);
+class CommunityScreen extends StatefulWidget {
+  const CommunityScreen({Key? key}) : super(key: key);
 
   @override
-  PrivacyPolicyScreenState createState() => PrivacyPolicyScreenState();
+  CommunityScreenState createState() => CommunityScreenState();
 }
 
-class PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
+class CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
@@ -41,7 +41,7 @@ class PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          "PRIVACY POLICY",
+                          "COMMUNITY",
                           style: TextStyle(
                             color: Color(MyColors.primaryColor),
                             fontWeight: FontWeight.w500,

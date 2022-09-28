@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 
-class AboutScreen extends StatefulWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+class AboutUsScreen extends StatefulWidget {
+  const AboutUsScreen({Key? key}) : super(key: key);
 
   @override
-  AboutScreenState createState() => AboutScreenState();
+  AboutUsScreenState createState() => AboutUsScreenState();
 }
 
-class AboutScreenState extends State<AboutScreen> {
+class AboutUsScreenState extends State<AboutUsScreen> {
   @override
   Widget build(BuildContext context) {
     return (Scaffold(

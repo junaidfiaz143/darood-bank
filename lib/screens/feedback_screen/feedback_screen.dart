@@ -1,7 +1,8 @@
 import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
+
+import '../../components/text_field_component.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class FeedbackScreen extends StatefulWidget {
 class FeedbackScreenState extends State<FeedbackScreen> {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return (Scaffold(
       body: SafeArea(
         child: Column(
@@ -70,68 +72,75 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                   ]),
             ),
             const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("درود بینک کے بانی",
-                  style: GoogleFonts.elMessiri(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(MyColors.primaryColor))),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
+            SizedBox(
+              width: size.width * 0.8,
+              child: Form(
+                // key: _phonelogin,
+                child: Column(
                   children: [
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.width * 0.6,
-                        padding: const EdgeInsets.all(1),
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: const Color(MyColors.primaryColor)
-                                .withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.asset(
-                            "assets/images/haji_m_fiaz.jpeg",
-                            fit: BoxFit.fill,
-                          ),
-                        )),
-                    Text(
-                      "حاجی محمد فیاض",
-                      style: GoogleFonts.elMessiri(
-                          color: const Color(MyColors.primaryColor)),
-                    )
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        "GUIDE US",
+                        style: TextStyle(
+                          color: Color(MyColors.primaryColor),
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    TextFormField(
+                      // enabled: !model.isLoading,
+                      maxLines: 5,
+                      // textInputAction: TextInputAction.go,
+                      keyboardType: TextInputType.multiline,
+                      textAlignVertical: TextAlignVertical.top,
+                      // expands: true,
+                      decoration: const InputDecoration(
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              1, 1, 1, 70), // add padding to adjust icon
+                          child: Icon(LineIcons.comment),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide: BorderSide(
+                                color: Color(MyColors.primaryColor))),
+                        fillColor: Color(MyColors.grey),
+                        filled: true,
+                        hintText: 'write your feedback/suggestion here...',
+                      ),
+                      onChanged: (value) {
+                        // _password = value;
+                        // print(_password);
+                      },
+                      validator: (value) {
+                        // print(value);
+                        if (value!.length == 8) {
+                          return null;
+                        }
+                        return 'Password Length Should be Greater Than or Equal to 8';
+                      },
+                    ),
                   ],
                 ),
-                Column(
-                  children: [
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.width * 0.6,
-                        padding: const EdgeInsets.all(1),
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: const Color(MyColors.primaryColor)
-                                .withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.asset(
-                            "assets/images/haji_m_muneer.png",
-                            fit: BoxFit.fill,
-                          ),
-                        )),
-                    Text(
-                      "حاجی منیر احمد",
-                      style: GoogleFonts.elMessiri(
-                          color: const Color(MyColors.primaryColor)),
-                    )
-                  ],
-                )
-              ],
+              ),
+            ),
+            SizedBox(height: size.height * 0.05),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SizedBox(
+                  height: 45,
+                  width: 200,
+                  child: ButtonComponent(
+                    function: () async {},
+                    title: 'SUBMIT',
+                    icon: LineIcons.arrowCircleRight,
+                    check: false,
+                  )),
             ),
             const Spacer()
           ],

@@ -1,6 +1,5 @@
 import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -70,68 +69,10 @@ class SettingsScreenState extends State<SettingsScreen> {
                   ]),
             ),
             const Spacer(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("درود بینک کے بانی",
-                  style: GoogleFonts.elMessiri(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(MyColors.primaryColor))),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.width * 0.6,
-                        padding: const EdgeInsets.all(1),
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: const Color(MyColors.primaryColor)
-                                .withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.asset(
-                            "assets/images/haji_m_fiaz.jpeg",
-                            fit: BoxFit.fill,
-                          ),
-                        )),
-                    Text(
-                      "حاجی محمد فیاض",
-                      style: GoogleFonts.elMessiri(
-                          color: const Color(MyColors.primaryColor)),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.4,
-                        height: MediaQuery.of(context).size.width * 0.6,
-                        padding: const EdgeInsets.all(1),
-                        margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            color: const Color(MyColors.primaryColor)
-                                .withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.asset(
-                            "assets/images/haji_m_muneer.png",
-                            fit: BoxFit.fill,
-                          ),
-                        )),
-                    Text(
-                      "حاجی منیر احمد",
-                      style: GoogleFonts.elMessiri(
-                          color: const Color(MyColors.primaryColor)),
-                    )
-                  ],
-                )
-              ],
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text("we are working on it for you...",
+                  style: TextStyle(color: Color(MyColors.greyText))),
             ),
             const Spacer()
           ],

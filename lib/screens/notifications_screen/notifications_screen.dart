@@ -2,14 +2,14 @@ import 'package:durood_bank/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 
-class PrivacyPolicyScreen extends StatefulWidget {
-  const PrivacyPolicyScreen({Key? key}) : super(key: key);
+class NotificationsScreen extends StatefulWidget {
+  const NotificationsScreen({Key? key}) : super(key: key);
 
   @override
-  PrivacyPolicyScreenState createState() => PrivacyPolicyScreenState();
+  NotificationsScreenState createState() => NotificationsScreenState();
 }
 
-class PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
+class NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
@@ -41,7 +41,7 @@ class PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          "PRIVACY POLICY",
+                          "NOTIFICATIONS",
                           style: TextStyle(
                             color: Color(MyColors.primaryColor),
                             fontWeight: FontWeight.w500,
@@ -71,7 +71,7 @@ class PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             const Spacer(),
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("we are working on it for you...",
+              child: Text("no notifications found",
                   style: TextStyle(color: Color(MyColors.greyText))),
             ),
             const Spacer()

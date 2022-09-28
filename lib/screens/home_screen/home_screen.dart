@@ -13,6 +13,7 @@ import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/utilities.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -47,6 +48,8 @@ class HomeScreenState extends State<HomeScreen>
   final PageController _pageController = PageController(
     initialPage: 0,
   );
+
+  final ScrollController _scrollController = ScrollController();
 
   // Timer? pageTimer;
 
@@ -359,7 +362,7 @@ class HomeScreenState extends State<HomeScreen>
                             } else {
                               controller!.forward().whenComplete(() {
                                 Navigator.pushNamed(
-                                        context, "/notificationScreen")
+                                        context, "/notificationsScreen")
                                     .then((value) {
                                   controller!.reverse();
                                 });
@@ -526,23 +529,40 @@ class HomeScreenState extends State<HomeScreen>
                         ),
                       );
                     }
-                    // return Container();
-                    // print(snapshot.data!.docs);
                     return Expanded(
                       child: Stack(
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(bottom: 0.0),
-                            child: ListView(
-                                shrinkWrap: true,
-                                children: snapshot.data!.docs.map((document) {
-                                  try {
-                                    return getContributionItem(
-                                        context, document);
-                                  } catch (e) {
-                                    return Container();
-                                  }
-                                }).toList()),
+                            child: NotificationListener(
+                              onNotification: (ScrollNotification notify) {
+                                if (_scrollController
+                                        .position.userScrollDirection ==
+                                    ScrollDirection.reverse) {
+                                  controller!.forward();
+                                  // print('scrolled down');
+                                  //the setState function
+                                } else if (_scrollController
+                                        .position.userScrollDirection ==
+                                    ScrollDirection.forward) {
+                                  controller!.reverse();
+                                  // print('scrolled up');
+                                  //setState function
+                                }
+                                return true;
+                              },
+                              child: ListView(
+                                  controller: _scrollController,
+                                  shrinkWrap: true,
+                                  children: snapshot.data!.docs.map((document) {
+                                    try {
+                                      return getContributionItem(
+                                          context, document);
+                                    } catch (e) {
+                                      return Container();
+                                    }
+                                  }).toList()),
+                            ),
                           ),
                           Visibility(
                             visible: dockVisible!,
@@ -592,6 +612,16 @@ class HomeScreenState extends State<HomeScreen>
                                                   ),
                                                   onTap: () {
                                                     debugPrint("filter");
+                                                    controller!
+                                                        .forward()
+                                                        .whenComplete(() {
+                                                      Navigator.pushNamed(
+                                                              context,
+                                                              "/filterScreen")
+                                                          .then((value) {
+                                                        controller!.reverse();
+                                                      });
+                                                    });
                                                   },
                                                 ),
                                                 InkWell(
@@ -610,6 +640,16 @@ class HomeScreenState extends State<HomeScreen>
                                                   ),
                                                   onTap: () {
                                                     debugPrint("stats");
+                                                    controller!
+                                                        .forward()
+                                                        .whenComplete(() {
+                                                      Navigator.pushNamed(
+                                                              context,
+                                                              "/statsScreen")
+                                                          .then((value) {
+                                                        controller!.reverse();
+                                                      });
+                                                    });
                                                   },
                                                 ),
                                                 InkWell(
@@ -628,6 +668,16 @@ class HomeScreenState extends State<HomeScreen>
                                                   ),
                                                   onTap: () {
                                                     debugPrint("community");
+                                                    controller!
+                                                        .forward()
+                                                        .whenComplete(() {
+                                                      Navigator.pushNamed(
+                                                              context,
+                                                              "/communityScreen")
+                                                          .then((value) {
+                                                        controller!.reverse();
+                                                      });
+                                                    });
                                                   },
                                                 ),
                                                 InkWell(
