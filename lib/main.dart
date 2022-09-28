@@ -4,9 +4,17 @@ import 'package:durood_bank/models/current_user_model.dart';
 import 'package:durood_bank/models/otp_callback_model.dart';
 import 'package:durood_bank/models/slider_model.dart';
 import 'package:durood_bank/screens/about_screen/about_screen.dart';
-import 'package:durood_bank/screens/counter_screen/counter_screen.dart';
+import 'package:durood_bank/screens/contact_us_screen/contact_us_screen.dart';
+import 'package:durood_bank/screens/contribute_screen/contribute_screen.dart';
+import 'package:durood_bank/screens/feedback_screen/feedback_screen.dart';
+import 'package:durood_bank/screens/home_screen/home_screen.dart';
 import 'package:durood_bank/screens/logging_in_screen/logging_in_screen.dart';
+import 'package:durood_bank/screens/login_screen/login_screen.dart';
+import 'package:durood_bank/screens/notification_screen/notification_screen.dart';
+import 'package:durood_bank/screens/privacy_policy_screen/privacy_policy_screen.dart';
 import 'package:durood_bank/screens/profile_screen/profile_screen.dart';
+import 'package:durood_bank/screens/settings_screen/settings_screen.dart';
+import 'package:durood_bank/screens/sign_up_screen/sign_up_screen.dart';
 import 'package:durood_bank/utils/colors.dart';
 import 'package:durood_bank/utils/globals.dart';
 import 'package:durood_bank/utils/utilities.dart';
@@ -130,9 +138,17 @@ class MyAppState extends State<MyApp> {
           initialRoute: "/",
           routes: {
             "/": (context) => const LoggingInScreen(),
+            "/logInScreen": (context) => const LoginScreen(),
+            "/signUpScreen": (context) => const SignUpScreen(),
+            "/homeScreen": (context) => const HomeScreen(),
             "/profileScreen": (context) => const ProfileScreen(),
-            "/counterScreen": (context) => const CounterScreen(),
-            "/aboutScreen": (context) => const AboutScreen()
+            "/contributeScreen": (context) => const ContributeScreen(),
+            "/aboutScreen": (context) => const AboutScreen(),
+            "/feedbackScreen": (context) => const FeedbackScreen(),
+            "/privacyPolicyScreen": (context) => const PrivacyPolicyScreen(),
+            "/contactScreen": (context) => const ContactUsScreen(),
+            "/settingsScreen": (context) => const SettingsScreen(),
+            "/notificationScreen": (context) => const NotificationScreen(),
           },
         ),
       ),

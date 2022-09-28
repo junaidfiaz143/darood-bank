@@ -257,6 +257,8 @@ class DrawerScreenState extends State<DrawerScreen> {
                           //         builder: (context) => const LoginScreen()));
                         }),
                         listTileItem(LineIcons.comment, 'Feedback', () {
+                          widget.scaffoldKey.currentState!.closeDrawer();
+                          widget.function!("/feedbackScreen");
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
@@ -264,18 +266,24 @@ class DrawerScreenState extends State<DrawerScreen> {
                         }),
                         listTileItem(
                             LineIcons.alternateShield, 'Privacy Policy', () {
+                          widget.scaffoldKey.currentState!.closeDrawer();
+                          widget.function!("/privacyPolicyScreen");
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
                           //         builder: (context) => const LoginScreen()));
                         }),
                         listTileItem(LineIcons.envelope, 'Contact Us', () {
+                          widget.scaffoldKey.currentState!.closeDrawer();
+                          widget.function!("/contactScreen");
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(
                           //         builder: (context) => const LoginScreen()));
                         }),
                         listTileItem(LineIcons.cog, 'Settings', () {
+                          widget.scaffoldKey.currentState!.closeDrawer();
+                          widget.function!("/settingsScreen");
                           // Navigator.push(
                           //     context,
                           //     MaterialPageRoute(

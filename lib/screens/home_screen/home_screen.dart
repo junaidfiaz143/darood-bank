@@ -203,11 +203,14 @@ class HomeScreenState extends State<HomeScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("ٱلْحَمْدُ لِلّٰهِ",
-                    style: GoogleFonts.elMessiri(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(MyColors.primaryColor))),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Text("ٱلْحَمْدُ لِلّٰهِ",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.elMessiri(
+                          fontWeight: FontWeight.w700,
+                          color: const Color(MyColors.primaryColor))),
+                ),
                 Consumer<TotalDurooodModel>(
                   builder: (context, durood, child) {
                     return FittedBox(
@@ -222,11 +225,16 @@ class HomeScreenState extends State<HomeScreen>
                     );
                   },
                 ),
-                Text("اللَّهُمَّ صل عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
-                    style: GoogleFonts.elMessiri(
-                        // fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(MyColors.primaryColor))),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Text(
+                      "اللَّهُمَّ صل عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.elMessiri(
+                          // fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(MyColors.primaryColor))),
+                ),
               ],
             )))));
 
@@ -348,7 +356,15 @@ class HomeScreenState extends State<HomeScreen>
                                     );
                                   }).then((value) => isDialogOpen = false);
                               isDialogOpen = true;
-                            } else {}
+                            } else {
+                              controller!.forward().whenComplete(() {
+                                Navigator.pushNamed(
+                                        context, "/notificationScreen")
+                                    .then((value) {
+                                  controller!.reverse();
+                                });
+                              });
+                            }
                           },
                           child: Container(
                               padding: const EdgeInsets.all(5),
@@ -453,7 +469,7 @@ class HomeScreenState extends State<HomeScreen>
                             controller!.forward().whenComplete(() {
                               Navigator.pushNamed(
                                 context,
-                                "/counterScreen",
+                                "/contributeScreen",
                               ).then((value) {
                                 controller!.reverse();
                                 if (value != null) {

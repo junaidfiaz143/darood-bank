@@ -44,12 +44,12 @@ class ProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
                           Text(
-                            "Profile",
+                            "PROFILE",
                             style: TextStyle(
-                                color: Color(MyColors.primaryColor),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 28,
-                                letterSpacing: 2),
+                              color: Color(MyColors.primaryColor),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                            ),
                           ),
                           // const Text("Junaid Fiaz"),
                         ],

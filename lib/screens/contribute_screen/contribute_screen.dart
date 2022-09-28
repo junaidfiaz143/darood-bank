@@ -12,14 +12,14 @@ import 'package:provider/provider.dart';
 
 import '../../models/current_user_model.dart';
 
-class CounterScreen extends StatefulWidget {
-  const CounterScreen({Key? key}) : super(key: key);
+class ContributeScreen extends StatefulWidget {
+  const ContributeScreen({Key? key}) : super(key: key);
 
   @override
-  CounterScreenState createState() => CounterScreenState();
+  ContributeScreenState createState() => ContributeScreenState();
 }
 
-class CounterScreenState extends State<CounterScreen> {
+class ContributeScreenState extends State<ContributeScreen> {
   double _daroodCounter = 0;
 
   makeContribution() {
@@ -101,12 +101,12 @@ class CounterScreenState extends State<CounterScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          "Counter",
+                          "CONTRIBUTION",
                           style: TextStyle(
-                              color: Color(MyColors.primaryColor),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 28,
-                              letterSpacing: 2),
+                            color: Color(MyColors.primaryColor),
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20,
+                          ),
                         ),
                         // const Text("Junaid Fiaz"),
                       ],

@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 
-class AboutScreen extends StatefulWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+class PrivacyPolicyScreen extends StatefulWidget {
+  const PrivacyPolicyScreen({Key? key}) : super(key: key);
 
   @override
-  AboutScreenState createState() => AboutScreenState();
+  PrivacyPolicyScreenState createState() => PrivacyPolicyScreenState();
 }
 
-class AboutScreenState extends State<AboutScreen> {
+class PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
@@ -42,7 +42,7 @@ class AboutScreenState extends State<AboutScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          "ABOUT US",
+                          "PRIVACY POLICY",
                           style: TextStyle(
                             color: Color(MyColors.primaryColor),
                             fontWeight: FontWeight.w500,

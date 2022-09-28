@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 
-class AboutScreen extends StatefulWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
-  AboutScreenState createState() => AboutScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class AboutScreenState extends State<AboutScreen> {
+class SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
@@ -42,7 +42,7 @@ class AboutScreenState extends State<AboutScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: const [
                         Text(
-                          "ABOUT US",
+                          "SETTINGS",
                           style: TextStyle(
                             color: Color(MyColors.primaryColor),
                             fontWeight: FontWeight.w500,
