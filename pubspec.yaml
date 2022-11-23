@@ -53,7 +53,7 @@ dependencies:
   ntp: ^2.0.0
   flutter_tts: ^3.5.3  
   sizer: ^2.0.15
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

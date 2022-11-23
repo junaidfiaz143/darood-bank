@@ -320,7 +320,7 @@ class DrawerScreenState extends State<DrawerScreen> {
                               builder: (context) {
                                 Future.delayed(const Duration(seconds: 2),
                                     () async {
-                                  deleteSharedPreference();
+                                  LoginService.deleteUserData();
                                   await FirebaseMessaging.instance
                                       .unsubscribeFromTopic('all');
 

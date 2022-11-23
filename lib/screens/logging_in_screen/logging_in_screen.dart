@@ -34,7 +34,7 @@ class _LoggingInScreenState extends State<LoggingInScreen>
     _controller.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
         await Utilities.setFirstTimePrefrences();
-        loadDetails().then((value) async {
+        LoginService.loadUserData().then((value) async {
           if (value != null) {
             final QuerySnapshot loginQuery = await FirebaseFirestore.instance
                 .collection('users')
@@ -49,8 +49,8 @@ class _LoggingInScreenState extends State<LoggingInScreen>
             });
 
             if (loginQuery.docs.isNotEmpty) {
-              savePreferences(loginQuery.docs.first.data());
-              loadDetails().then((value) {
+              LoginService.saveUserData(loginQuery.docs.first.data());
+              LoginService.loadUserData().then((value) {
                 if (value != null) {
                   Provider.of<CurrentUserModel>(context, listen: false)
                       .fullName = value[0];
@@ -75,7 +75,7 @@ class _LoggingInScreenState extends State<LoggingInScreen>
                 }
               });
             } else {
-              deleteSharedPreference();
+              LoginService.deleteUserData();
 
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
@@ -84,7 +84,7 @@ class _LoggingInScreenState extends State<LoggingInScreen>
               );
             }
           } else {
-            deleteSharedPreference();
+            LoginService.deleteUserData();
 
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(

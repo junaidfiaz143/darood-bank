@@ -11,7 +11,6 @@ import 'package:durood_bank/models/login_state_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/current_user_model.dart';
 import '../../services/login_service.dart';
@@ -35,13 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _password = "";
 
   final String countryCode = '+92';
-
-  Future savePrefs(String contact, String password) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    prefs.setString("contact", contact);
-    prefs.setString("password", password);
-  }
 
   late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   String name = "";
@@ -80,8 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     if (loginQuery.docs.isNotEmpty) {
       updateLoadingState(false);
-      savePreferences(loginQuery.docs.first.data());
-      loadDetails().then((value) {
+      LoginService.saveUserData(loginQuery.docs.first.data());
+      LoginService.loadUserData().then((value) {
         if (value != null) {
           Provider.of<CurrentUserModel>(context, listen: false).fullName =
               value[0];
@@ -91,9 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
               value[2];
           Provider.of<CurrentUserModel>(context, listen: false).phoneNumber =
               value[3];
-          Provider.of<CurrentUserModel>(context, listen: false).city = value[3];
+          Provider.of<CurrentUserModel>(context, listen: false).city = value[4];
           Provider.of<CurrentUserModel>(context, listen: false).password =
-              value[4];
+              value[5];
+          Provider.of<CurrentUserModel>(context, listen: false).gender =
+              value[6];
         }
       });
 
